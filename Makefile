@@ -6,7 +6,7 @@
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/02 18:06:40 by eralonso          #+#    #+#              #
-#    Updated: 2024/08/10 10:02:52 by eralonso         ###   ########.fr        #
+#    Updated: 2024/08/10 16:09:53 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,7 +27,7 @@ SRCS_DIRS := $(subst :,$(SPACE),$(SRCS_DIRS))
 SRCS_DIRS := $(addprefix $(SRCS_ROOT),$(SRCS_DIRS))
 SRCS_DIRS := $(subst $(SPACE),:,$(SRCS_DIRS))
 
-FILES := exit
+FILES := ft_strlen#exit
 
 SUFFIX := s
 
