@@ -6,13 +6,18 @@
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/02 18:06:40 by eralonso          #+#    #+#              #
-#    Updated: 2024/08/10 16:09:53 by eralonso         ###   ########.fr        #
+#    Updated: 2024/08/11 15:28:43 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME := asm
-NAME := $(addprefix lib,$(NAME))
-NAME := $(addsuffix .a,$(NAME))
+
+NAME_TYPE := library
+
+ifeq ($(NAME_TYPE),library)
+	NAME := $(addprefix lib,$(NAME))
+	NAME := $(addsuffix .a,$(NAME))
+endif
 
 NULL := 
 SPACE := $(NULL) #
@@ -27,7 +32,7 @@ SRCS_DIRS := $(subst :,$(SPACE),$(SRCS_DIRS))
 SRCS_DIRS := $(addprefix $(SRCS_ROOT),$(SRCS_DIRS))
 SRCS_DIRS := $(subst $(SPACE),:,$(SRCS_DIRS))
 
-FILES := ft_strlen#exit
+FILES := ft_strlen
 
 SUFFIX := s
 
@@ -48,7 +53,7 @@ vpath %.o $(OBJS_ROOT)
 #FUNCTIONS
 
 define remove_dir_file
-if [ -d $1 ]; then \
+if ! [ -z $1 ]; then \
 	$(RM) -r $1; \
 else \
 	$(RM) $2; \
@@ -57,20 +62,22 @@ endef
 
 #RULES
 
-$(OBJS_ROOT)%.o: %.$(SUFFIX)
+$(OBJS_ROOT)%.o: %.$(SUFFIX) $(OBJS_ROOT) $(DEPS_ROOT)
 	$(AS) $(ASFLAGS) $(AS_MAKEFILE_DEPENDCY_FLAG) $(DEPS_ROOT)$(basename $*).d $< -o $@
 
-(%.o): $(OBJS_ROOT)%o
-
-all: $(TO_CREATE_DIRS) $(NAME)
+all: $(NAME)
 
 $(TO_CREATE_DIRS):
 	-mkdir -p $@
 
-$(NAME): $(NAME)($(OBJS))
+$(NAME): $(BIN_ROOT)
 
-#$(NAME): $(OBJS)
-#	ld $(OBJS) -o $(NAME)
+ifeq ($(NAME_TYPE),executable)
+$(NAME): $(OBJS)
+	ld $(OBJS) -o $(NAME)
+else ifeq ($(NAME_TYPE),library)
+$(NAME): $(NAME)($(OBJS))
+endif
 
 clean:
 	$(call remove_dir_file,$(OBJS_ROOT),$(OBJS))
