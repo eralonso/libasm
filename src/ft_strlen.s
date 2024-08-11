@@ -2,14 +2,11 @@ section .text
 global ft_strlen
 
 ft_strlen:
-	mov rbx, rdi
-	xor rcx, rcx
+	xor rax, rax ; i = 0
 	while_loop:
-		cmp byte [rbx + rcx], 0
-		je finish
-		inc rcx
+		cmp byte [rdi + rax], 0 ; str[i] == 0
+		je finish_function
+		inc rax ; i++
 		jmp while_loop
-
-finish:
-	mov rax, rcx
-	ret
+	finish_function:
+		ret ; end
