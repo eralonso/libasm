@@ -2,11 +2,12 @@ section .text
 global ft_strlen
 
 ft_strlen:
-	xor rax, rax ; i = 0
+	mov rax, rdi ; tmp = str
 	while_loop:
-		cmp byte [rdi + rax], 0 ; str[i] == 0
+		cmp byte [rax], 0 ; *tmp == 0
 		je finish_function
-		inc rax ; i++
+		inc rax ; tmp++
 		jmp while_loop
 	finish_function:
+		sub rax, rdi ; tmp -= str
 		ret ; end
