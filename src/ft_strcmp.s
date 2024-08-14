@@ -6,17 +6,14 @@ ft_strcmp:
 	while_loop:
 		mov al, byte [rdi] ; tmp = *s1
 		cmp al, byte [rsi] ; tmp == *s2
-		jne finish_function ; !=
+		jne finish_function
 		cmp al, 0 ; tmp == 0
-		je finish_function; ==
+		je finish_function
 		inc rdi ; s1++
 		inc rsi ; s2++
 		jmp while_loop
 	finish_function:
-		xor rcx, rcx
-		mov rcx, [rsi]
-		sub rcx, rax 
-		mov rax, rcx
-		; sub rax, [rsi]
-		; jc ft_strcmp
+		sub al, byte [rsi] ; tmp -= *s2
+		movsx eax, al ; conversion from byte to doble word
 		ret ; end
+
