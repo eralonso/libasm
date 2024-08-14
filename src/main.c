@@ -34,6 +34,7 @@ struct	s_linked_list
 size_t	ft_strlen(const char *str);
 char	*ft_strcpy(char *dst, const char *src);
 int		ft_strcmp(const char *s1, const char *s2);
+ssize_t	ft_write(int fd, const void *buf, size_t count);
 //{
 //	size_t	len = 0;
 //
@@ -133,9 +134,34 @@ void	test_strcmp(void)
 	}
 }
 
+void	__test_write_time(ssize_t (*write_pointer)(int, const void *, size_t), char *name, int fd, char *buf, size_t count)
+{
+	unsigned long	start;
+	unsigned long	end;
+	ssize_t			written;
+
+	start = get_time();
+	written = write_pointer(fd, buf, count);
+	end = get_time();
+	printf("%s(%s) == %zu in %lu microseconds\n", name, "test", written, end - start);
+}
+
+void	test_write(void)
+{
+	char	*strs[] = {"", "hola mundo", "sip faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"};
+
+	printf("TEST: WRITE vs FT_WRITE\n");
+	for (int i = 0; i < sizeof(strs) / sizeof(*strs); i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_write_time(write, "\twrite", 1, strs[i], strlen(strs[i]));
+		__test_write_time(ft_write, "\tft_write", 1, strs[i], strlen(strs[i]));
+	}
+}
+
 int	main(void)
 {
-	void	(*tests[])(void) = {test_strlen, test_strcpy, test_strcmp};
+	void	(*tests[])(void) = {test_strlen, test_strcpy, test_strcmp, test_write};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
 	for	(int test = 0; test < tests_size; test++)
