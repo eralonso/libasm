@@ -5,8 +5,8 @@ ft_strcpy:
 	mov rax, rdi
 	while_loop:
 		cmp byte [rsi], 0 ; *src == 0
-		mov bl, [rsi] ; tmp = *src ; bl -> Subregister of rbx, lower 8 bits
-		mov [rdi], bl ; *dst == tmp
+		cmove cl, [rsi] ; tmp = *src ; bl -> Subregister of rbx, lower 8 bits
+		mov [rdi], cl ; *dst == tmp
 		je finish_function
 		inc rdi ; dst++
 		inc rsi ; src++
