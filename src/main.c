@@ -1,3 +1,4 @@
+#include <sys/errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -150,31 +151,34 @@ void	__test_write_time(ssize_t (*write_pointer)(int, const void *, size_t), char
 	start = get_time();
 	written = write_pointer(fd, buf, count);
 	end = get_time();
-	printf("%s(%s) == %ld in %lu microseconds\n", name, "test", written, end - start);
+	printf("%s(%s) == %zd && errno == %i, in %lu microseconds\n", name, "test", written, errno, end - start);
 }
 
 void	test_write(void)
 {
 	char	*strs[] = {"", "hola mundo", "sip faaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"};
+	int		fd[] = {1, -1};
 	int		strs_len = sizeof(strs) / sizeof(*strs);
+	int		fd_len = sizeof(fd) / sizeof(*fd);
 
 	printf("TEST: WRITE vs FT_WRITE\n");
-	for (int i = 0; i < strs_len; i++)
+	for (int i = 0; i < fd_len; i++)
 	{
-		printf("TEST %i:\n", i + 1);
-		__test_write_time(write, "\twrite", 1, strs[i], strlen(strs[i]));
-		__test_write_time(ft_write, "\tft_write", 1, strs[i], strlen(strs[i]));
+		for (int j = 0; j < strs_len; j++)
+		{
+			printf("TEST %i:\n", (i * strs_len) + j + 1);
+			__test_write_time(write, "\twrite", fd[i], strs[j], strlen(strs[j]));
+			__test_write_time(ft_write, "\tft_write", fd[i], strs[j], strlen(strs[j]));
+		}
 	}
 }
-
-#include <errno.h>
 
 int	main(void)
 {
 	void	(*tests[])(void) = {test_strlen, test_strcpy, test_strcmp, test_write};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
-	for	(int test = 0; test < tests_size; test++)
+	for	(int test = 3; test < tests_size; test++)
 	{
 		tests[test]();
 		if (test < tests_size - 1)
