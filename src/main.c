@@ -151,7 +151,7 @@ void	__test_write_time(ssize_t (*write_pointer)(int, const void *, size_t), char
 	start = get_time();
 	written = write_pointer(fd, buf, count);
 	end = get_time();
-	printf("%s(%s) == %zd && errno == %i, in %lu microseconds\n", name, "test", written, errno, end - start);
+	printf("%s(%i, %s, %zu) == %zd && errno == %i, in %lu microseconds\n", name, fd, "test", count, written, errno, end - start);
 }
 
 void	test_write(void)

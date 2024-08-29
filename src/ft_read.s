@@ -1,13 +1,13 @@
 section .text
-global ft_write
+global ft_read
 
 extern __errno_location
 
-ft_write:
-	mov rax, 1 ; set system call to write
+ft_read:
+	mov rax, 0 ; set system call to read
 	syscall ; call
 	cmp rax, 0
-	jge finish_function ; write(fd, buf, len) >= 0
+	jge finish_function ; read(fd, buf, len) >= 0
 	manage_errno:
 		mov rcx, rax ; tmp = error_value
 		call __errno_location ; get errno variable address
