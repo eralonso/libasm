@@ -37,6 +37,7 @@ char	*ft_strcpy(char *dst, const char *src);
 int		ft_strcmp(const char *s1, const char *s2);
 ssize_t	ft_write(int fd, const void *buf, size_t count);
 ssize_t	ft_read(int fd, void *buf, size_t count);
+char	*ft_strdup(const char *s);
 //{
 //	size_t	len = 0;
 //
@@ -47,7 +48,7 @@ ssize_t	ft_read(int fd, void *buf, size_t count);
 
 char	*get_string_bool(int res)
 {
-	return res ? "True": "False";
+	return (res ? "True": "False");
 }
 
 unsigned long	get_time(void)
@@ -208,12 +209,42 @@ void	test_read(void)
 		free(strs[i]);
 }
 
+void	__test_strdup_time(char *(*strdup_pointer)(const char *), char *name, const char *s)
+{
+	unsigned long	start;
+	unsigned long	end;
+	char			*string_duplicated;
+
+	start = get_time();
+	string_duplicated = strdup_pointer(s);
+	end = get_time();
+	printf("%s(%s) == %s && different address == %s && same content == %s && errno == %i, in %lu microseconds\n",
+			name, "test", string_duplicated, get_string_bool(string_duplicated != s),
+			get_string_bool(!strncmp(string_duplicated, s, strlen(s))),
+			errno, end - start);
+	free(string_duplicated);
+}
+
+void	test_strdup(void)
+{
+	char	*strs[] = {"patata", "alaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"};
+	int		strs_len = sizeof(strs) / sizeof(*strs);
+
+	printf("TEST: STRDUP vs FT_STRDUP\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_strdup_time(strdup, "\tstrdup", strs[i]);
+		__test_strdup_time(ft_strdup, "\tft_strdup", strs[i]);
+	}
+}
+
 int	main(void)
 {
-	void	(*tests[])(void) = {test_strlen, test_strcpy, test_strcmp, test_write, test_read};
+	void	(*tests[])(void) = {test_strlen, test_strcpy, test_strcmp, test_write, test_read, test_strdup};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
-	for	(int test = 4; test < tests_size; test++)
+	for	(int test = 5; test < tests_size; test++)
 	{
 		tests[test]();
 		if (test < tests_size - 1)
