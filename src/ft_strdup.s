@@ -11,10 +11,7 @@ ft_strdup:
 	mov rdi, rax ; size = ret
 	inc rdi ; size++
 	call malloc ; ret = malloc(size)
-	cmp rax, 0 ; ret == NULL
-	je finish_function
 	mov rdi, rax ; dst = ret
 	pop rsi ; src = tmp
 	call ft_strcpy ; ret = ft_strcpy(dst, src)
-	finish_function:
-		ret ; return ret
+	ret ; return ret
