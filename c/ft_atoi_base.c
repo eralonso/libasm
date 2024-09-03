@@ -6,7 +6,7 @@
 /*   By: eralonso <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:10:18 by eralonso          #+#    #+#             */
-/*   Updated: 2024/09/03 19:55:55 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/09/03 20:01:49 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,16 +261,5 @@ int	main(void)
 			return (1);
 		test++;
 	}
-	//test_atoi_base("a", "ab", 1);
-	//test_atoi_base("a", "aab", 0);
-	//test_atoi_base("a", "a", 0);
-	//test_atoi_base("a", "ab+", 0);
-	//test_atoi_base("a", "ab-", 0);
-	//test_atoi_base("a", "ab+-", 0);
-	//test_atoi_base("a", "a+b", 0);
-	//test_atoi_base("a", "-ab", 0);
-	//test_atoi_base("a", "-+ab", 0);
-	//test_atoi_base("a", "+acdeb", 0);
-	//test_atoi_base("a", "acdefrtgb", 1);
 	return (0);
 }
