@@ -6,16 +6,45 @@
 /*   By: eralonso <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:10:18 by eralonso          #+#    #+#             */
-/*   Updated: 2024/09/03 17:12:38 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/09/03 19:55:55 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdio.h>
 
-typedef int	(*t_char_checkers)(int);
-typedef int	(*t_string_checkers)(const char *);
+typedef int	(*t_char_checker)(int);
+typedef int	(*t_string_checker)(const char *);
 typedef int	(*t_atoi_base_test)(void);
+
+size_t	ft_strlen(const char *str)
+{
+	size_t	i;
+
+	i = 0;
+	while (str[i])
+		i++;
+	return (i);
+}
+
+char	convert_sign_to_number(const char c)
+{
+	if (c == '-')
+		return (-1);
+	return (1);;
+}
+
+ssize_t	find_first_not_of(const char *str, t_char_checker cmp)
+{
+	ssize_t	i;
+
+	i = 0;
+	while (str[i] && cmp(str[i]))
+		i++;
+	if (cmp(str[i]))
+		return (-1);
+	return (i);
+}
 
 ssize_t	ft_strchri(const char *str, int c)
 {
@@ -24,7 +53,7 @@ ssize_t	ft_strchri(const char *str, int c)
 	i = 0;
 	while (str[i] && str[i] != (char)c)
 		i++;
-	if ((char)c != '\0')
+	if (str[i] != (char)c)
 		return (-1);
 	return (i);
 }
@@ -69,7 +98,7 @@ static int	__has_base_minum_size(const char *base)
 
 static int	__has_base_valid_characters(const char *base)
 {
-	const t_char_checkers	checkers[] = {ft_isspace, is_sign_symbol};
+	const t_char_checker	checkers[] = {ft_isspace, is_sign_symbol};
 	const int				checkers_amount = \
 		sizeof(checkers) / sizeof(*checkers);
 	int						checker;
@@ -97,7 +126,7 @@ static int	__has_base_no_duplicated(const char *str)
 
 short	is_valid_base(const char *base)
 {
-	const t_string_checkers	checkers[] = {
+	const t_string_checker	checkers[] = {
 		__has_base_minum_size,
 		__has_base_valid_characters,
 		__has_base_no_duplicated};
@@ -113,21 +142,53 @@ short	is_valid_base(const char *base)
 		checker++;
 	}
 	return (1);
+};
+
+static int	__convert_to_int_from_base(const char *str, const char *base)
+{
+	int		value;
+	int		i;
+	int		number;
+	size_t	base_len;
+
+	i = 0;
+	value = 0;
+	number = 0;
+	base_len = ft_strlen(base);
+	while (str[i] && value >= 0)
+	{
+		value = ft_strchri(base, str[i]);
+		if (value >= 0)
+			number = number * base_len + value;
+		i++;
+	}
+	return (number);
 }
 
 static int	__ft_atoi_base(const char *str, const char *base)
 {
-	int	number;
+	int		number;
+	char	sign;
+	int		pos;
 
-	number = 1;
-	(void) str;
-	(void) base;
-	return (number);
+
+	number = 0;
+	sign = 1;
+	pos = find_first_not_of(str, ft_isspace);
+	if (pos == -1)
+		return (number);
+	if (is_sign_symbol(str[pos]))
+	{
+		sign = convert_sign_to_number(str[pos]);
+		pos++;
+	}
+	number = __convert_to_int_from_base(str + pos, base);
+	return (number * sign);
 }
 
 int	ft_atoi_base(char *str, char *base)
 {
-	if (!is_valid_base(base))
+	if (!is_valid_base(base) || !str)
 		return (0);
 	return (__ft_atoi_base(str, base));
 }
@@ -164,10 +225,10 @@ int	multiple_test_atoi_base(const char *strs[], const char *bases[],
 int	test_base(void)
 {
 	const char	*strs[] = {
+		"b", "a", "a",
 		"a", "a", "a",
 		"a", "a", "a",
-		"a", "a", "a",
-		"a", "a", "a"
+		"a", "a", "b"
 	};
 	const char	*bases[] = {
 		"ab", "aab", "a",
@@ -179,7 +240,7 @@ int	test_base(void)
 		1, 0, 0,
 		0, 0, 0,
 		0, 0, 0,
-		0, 0, 1};
+		0, 0, 8};
 	const int	test_amount = sizeof(strs) / sizeof(*strs);
 
 	return (multiple_test_atoi_base(strs, bases, expected_values, test_amount));
