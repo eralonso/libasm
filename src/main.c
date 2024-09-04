@@ -38,6 +38,8 @@ int		ft_strcmp(const char *s1, const char *s2);
 ssize_t	ft_write(int fd, const void *buf, size_t count);
 ssize_t	ft_read(int fd, void *buf, size_t count);
 char	*ft_strdup(const char *s);
+char	convert_sign_to_number(const char c);
+ssize_t	ft_strchri(const char *s, int c);
 //{
 //	size_t	len = 0;
 //
@@ -239,12 +241,67 @@ void	test_strdup(void)
 	}
 }
 
+void	__test_convert_sign_to_number_time(char (*convert_sign_to_number_pointer)(const char ), char *name, const char c)
+{
+	unsigned long	start;
+	unsigned long	end;
+	char			sign;
+
+	start = get_time();
+	sign = convert_sign_to_number_pointer(c);
+	end = get_time();
+	printf("%s(%c) == %i in %lu microseconds\n", name, c, sign, end - start);
+}
+
+void	test_convert_sign_to_number(void)
+{
+	char	strs[] = {'-', '+', 'a'};
+	int		strs_len = sizeof(strs) / sizeof(*strs);
+
+	printf("TEST: CONVERT_SIGN_TO_NUMBER\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_convert_sign_to_number_time(convert_sign_to_number, "\tconvert_sign_to_number", strs[i]);
+	}
+}
+
+void	__test_strchri_time(ssize_t (*strchri_pointer)(const char *, int), char *name, const char *str, int c)
+{
+	unsigned long	start;
+	unsigned long	end;
+	ssize_t			pos;
+
+	start = get_time();
+	pos = strchri_pointer(str, c);
+	end = get_time();
+	printf("%s(%s, %c) == %zi in %lu microseconds\n", name, str, c, pos, end - start);
+}
+
+void	test_strchri(void)
+{
+	char	*strs[] = {"", "", "a", "aaaaaaaaaaaaaaba", "aaaaaaaaaaaaaaba"};
+	char	chrs[] = {'-', '\0', 'a', 'a', 'b'};
+	int		strs_len = sizeof(strs) / sizeof(*strs);
+
+	printf("TEST: STRCHRI\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_strchri_time(ft_strchri, "\tft_strchri", strs[i], chrs[i]);
+	}
+}
+
 int	main(void)
 {
-	void	(*tests[])(void) = {test_strlen, test_strcpy, test_strcmp, test_write, test_read, test_strdup};
+	void	(*tests[])(void) = {
+		test_strlen, test_strcpy, test_strcmp,
+		test_write, test_read, test_strdup,
+		test_convert_sign_to_number, test_strchri
+	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
-	for	(int test = 5; test < tests_size; test++)
+	for	(int test = tests_size - 1; test < tests_size; test++)
 	{
 		tests[test]();
 		if (test < tests_size - 1)

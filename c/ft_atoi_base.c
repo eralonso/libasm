@@ -6,7 +6,7 @@
 /*   By: eralonso <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:10:18 by eralonso          #+#    #+#             */
-/*   Updated: 2024/09/04 12:50:21 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/09/04 16:06:49 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,54 @@ size_t	ft_strlen(const char *str)
 	return (i);
 }
 
+ssize_t	ft_strchr_count(const char *str, const char c)
+{
+	int		i;
+	size_t	counter;
+
+	i = 0;
+	counter = 0;
+	while (str[i])
+	{
+		if (str[i] == c)
+			counter++;
+		i++;
+	}
+	if (!counter)
+		return (-1);
+	return (counter);
+}
+
 char	convert_sign_to_number(const char c)
 {
 	if (c == '-')
 		return (-1);
-	return (1);;
+	return (1);
+}
+
+char	convert_sign_str_n_to_number(const char *str, const size_t n)
+{
+	int		i;
+	char	final_sign;
+	int		minus_sign_count;
+
+	i = 0;
+	final_sign = 1;
+	minus_sign_count = 0;
+	while (str[i] && i < n && is_sign_symbol(str[i]))
+	{
+		if (str[i] == '-')
+			minus_sign_count++;
+		i++;
+	}
+	if (minus_sign_count & 1)
+		final_sign = -1;
+	return (final_sign);
+}
+
+char	convert_sign_str_to_number(const char *str)
+{
+	return (convert_sign_str_n_to_number(str, -1));
 }
 
 ssize_t	str_find_first_not_of(const char *str, t_char_cmp cmp)
@@ -181,17 +224,20 @@ static int	__ft_atoi_base(const char *str, const char *base)
 	int		number;
 	char	sign;
 	int		pos;
-
+	int		last_sign_pos;
 
 	number = 0;
 	sign = 1;
 	pos = str_find_first_not_of(str, ft_isspace);
 	if (pos == -1)
-		return (number);
+		return (0);
 	if (is_sign_symbol(str[pos]))
 	{
-		sign = convert_sign_to_number(str[pos]);
-		pos++;
+		last_sign_pos = str_find_first_not_of(str + pos, is_sign_symbol);
+		if (last_sign_pos == -1)
+			return (0);
+		sign = convert_sign_str_n_to_number(str + pos, last_sign_pos);
+		pos += last_sign_pos;
 	}
 	number = __convert_to_int_from_base(str + pos, base);
 	return (number * sign);
