@@ -6,15 +6,21 @@
 /*   By: eralonso <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:10:18 by eralonso          #+#    #+#             */
-/*   Updated: 2024/09/03 20:01:49 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/09/04 12:50:21 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <unistd.h>
 #include <stdio.h>
 
-typedef int	(*t_char_checker)(int);
-typedef int	(*t_string_checker)(const char *);
+#ifndef BASE_MIN_SIZE
+# define BASE_MIN_SIZE 2
+#endif
+
+typedef int	(*t_char_cmp)(int);
+
+typedef t_char_cmp	t_char_checker;
+typedef int	(*t_str_checker)(const char *);
 typedef int	(*t_atoi_base_test)(void);
 
 size_t	ft_strlen(const char *str)
@@ -34,7 +40,7 @@ char	convert_sign_to_number(const char c)
 	return (1);;
 }
 
-ssize_t	find_first_not_of(const char *str, t_char_checker cmp)
+ssize_t	str_find_first_not_of(const char *str, t_char_cmp cmp)
 {
 	ssize_t	i;
 
@@ -91,9 +97,14 @@ int	has_char_duplicated(const char *str)
 	return (0);
 }
 
-static int	__has_base_minum_size(const char *base)
+int	str_has_min_size(const char *str, const size_t min_size)
 {
-	return (base && base[0] && base[1]); // or return (ft_strlen(base) > 1);
+	return (str && ft_strlen(str) >= min_size)
+}
+
+static int	__has_base_min_size(const char *base)
+{
+	return (str_has_min_size(base, BASE_MIN_SIZE));
 }
 
 static int	__has_base_valid_characters(const char *base)
@@ -126,8 +137,8 @@ static int	__has_base_no_duplicated(const char *str)
 
 short	is_valid_base(const char *base)
 {
-	const t_string_checker	checkers[] = {
-		__has_base_minum_size,
+	const t_str_checker	checkers[] = {
+		__has_base_min_size,
 		__has_base_valid_characters,
 		__has_base_no_duplicated};
 	const int				checkers_amount = \
@@ -174,7 +185,7 @@ static int	__ft_atoi_base(const char *str, const char *base)
 
 	number = 0;
 	sign = 1;
-	pos = find_first_not_of(str, ft_isspace);
+	pos = str_find_first_not_of(str, ft_isspace);
 	if (pos == -1)
 		return (number);
 	if (is_sign_symbol(str[pos]))
@@ -225,30 +236,74 @@ int	multiple_test_atoi_base(const char *strs[], const char *bases[],
 int	test_base(void)
 {
 	const char	*strs[] = {
-		"b", "a", "a",
-		"a", "a", "a",
-		"a", "a", "a",
-		"a", "a", "b"
+		"b", "a", "b",
+		"b", "b", "b",
+		"b", "b", "b",
+		"\t", "b", "b"
 	};
 	const char	*bases[] = {
-		"ab", "aab", "a",
-		"ab+", "ab-", "ab+-",
-		"a+b", "-ab", "-+ab",
-		"+acdeb", "", "acdefrtgb"
+		"aab", "a", "ab+",
+		"ab-", "ab+-", "a+b",
+		"-ab", "-+ab", "+acdeb",
+		" \t", "\t ab", " +ab"
 	};
 	const int	expected_values[] = {
-		1, 0, 0,
 		0, 0, 0,
 		0, 0, 0,
-		0, 0, 8};
+		0, 0, 0,
+		0, 0, 0
+	};
 	const int	test_amount = sizeof(strs) / sizeof(*strs);
 
 	return (multiple_test_atoi_base(strs, bases, expected_values, test_amount));
 }
 
+int	test_conversion(void)
+{
+	const char	*strs[] = {
+		"a", "b", "ab",
+		"ba", "baa", "aaaaaaaaba",
+		"bb", "aaabbb", "aaaaaaaaaaaabbbbba",
+		"         ba", "b   ab", "   b b a bb",
+		"-b", "+b", "-+b",
+		"+-ab", "b-", "b-a",
+		"-abb+b", " +bab", " -bab",
+		"      +bab", "     -bab", "    +-bab"
+	};
+	const char	*base = "ab";
+	//const char	*bases[] = {
+	//	"ab", "ab", "ab",
+	//	"ab", "ab", "ab",
+	//	"ab", "ab", "ab"
+	//};
+	const int	expected_values[] = {
+		0, 1, 1,
+		2, 4, 2,
+		3, 7, 62,
+		2, 1, 1,
+		-1, 1, 0,
+		0, 1, 1,
+		-3, 5, -5,
+		5, -5, 0
+	};
+	const int	test_amount = sizeof(strs) / sizeof(*strs);
+	int			test;
+
+	test = 0;
+	while (test < test_amount)
+	{
+		if (!test_atoi_base((char *)strs[test], (char *)base,
+				expected_values[test]))
+			return (0);
+		test++;
+	}
+	return (1);
+	//return (multiple_test_atoi_base(strs, bases, expected_values, test_amount));
+}
+
 int	main(void)
 {
-	const t_atoi_base_test	tests[] = {test_base};
+	const t_atoi_base_test	tests[] = {test_base, test_conversion};
 	const int				tests_amount = \
 		sizeof(tests) / sizeof(*tests);
 	int						test;
@@ -259,6 +314,8 @@ int	main(void)
 		printf("\033[1;98mTest %i:\n\033[0m", test + 1);
 		if (!tests[test]())
 			return (1);
+		if (test + 1 < tests_amount)
+			write(1, "\n", 1);
 		test++;
 	}
 	return (0);
