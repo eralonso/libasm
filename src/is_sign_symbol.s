@@ -6,7 +6,7 @@ is_sign_symbol:
 	xor rax, rax
 	xor rcx, rcx
 	while_loop:
-		cmp byte [sign_symbols + rcx], 0
+		cmp qword [sign_symbols_len], rcx
 		je finish_function
 		cmp byte [sign_symbols + rcx], dil
 		je set_is_sign_symbol
@@ -18,4 +18,5 @@ is_sign_symbol:
 		ret
 
 section .rodata
-	sign_symbols: db "+-", 0
+	sign_symbols: db "+-"
+	sign_symbols_len: dq $ - sign_symbols
