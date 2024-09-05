@@ -40,6 +40,7 @@ ssize_t	ft_read(int fd, void *buf, size_t count);
 char	*ft_strdup(const char *s);
 char	convert_sign_to_number(const char c);
 ssize_t	ft_strchri(const char *s, int c);
+int		is_sign_symbol(int c);
 //{
 //	size_t	len = 0;
 //
@@ -292,12 +293,38 @@ void	test_strchri(void)
 	}
 }
 
+void	__test_is_sign_symbol_time(int (*is_sign_symbol_pointer)(int), char *name, int c)
+{
+	unsigned long	start;
+	unsigned long	end;
+	int				res;
+
+	start = get_time();
+	res = is_sign_symbol_pointer(c);
+	end = get_time();
+	printf("%s(%c) == %i in %lu microseconds\n", name, c, res, end - start);
+}
+
+void	test_is_sign_symbol(void)
+{
+	char	strs[] = {'+', ' ', '-', '\0', 'a'};
+	int		strs_len = sizeof(strs) / sizeof(*strs);
+
+	printf("TEST: IS_SIGN_SYMBOL\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_is_sign_symbol_time(is_sign_symbol, "\tis_sign_symbol", strs[i]);
+	}
+}
+
 int	main(void)
 {
 	void	(*tests[])(void) = {
 		test_strlen, test_strcpy, test_strcmp,
 		test_write, test_read, test_strdup,
-		test_convert_sign_to_number, test_strchri
+		test_convert_sign_to_number, test_strchri,
+		test_is_sign_symbol
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 

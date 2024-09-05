@@ -8,11 +8,11 @@ is_sign_symbol:
 	while_loop:
 		cmp byte [sign_symbols + rcx], 0
 		je finish_function
-		cmp byte [sign_symbols + rcx], rdi
-		je is_sign_symbol
+		cmp byte [sign_symbols + rcx], dil
+		je set_is_sign_symbol
 		inc rcx
 		jmp while_loop
-	is_sign_symbol:
+	set_is_sign_symbol:
 		mov rax, 1
 	finish_function:
 		ret
