@@ -6,7 +6,7 @@
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/02 18:06:40 by eralonso          #+#    #+#              #
-#    Updated: 2024/09/05 08:38:39 by eralonso         ###   ########.fr        #
+#    Updated: 2024/09/06 08:59:44 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,7 @@ SRCS_DIRS := $(subst $(SPACE),:,$(SRCS_DIRS))
 
 FILES := ft_strlen ft_strcpy ft_strcmp ft_write ft_read \
 		 ft_strdup convert_sign_to_number ft_strchri \
-		 is_sign_symbol #convert_sign_str_n_to_number #ft_atoi_base
+		 is_sign_symbol convert_sign_str_n_to_number #ft_atoi_base
 
 SUFFIX := s
 
@@ -43,7 +43,7 @@ OBJS := $(addprefix $(OBJS_ROOT),$(addsuffix .o,$(FILES)))
 DEPS := $(addprefix $(DEPS_ROOT),$(addsuffix .d,$(FILES)))
 
 AS := nasm
-ASFLAGS := -f elf64
+ASFLAGS := -f elf64 -w+regsize
 AS_MAKEFILE_DEPENDCY_FLAG := -MD
 
 NAME := $(addprefix $(BIN_ROOT),$(NAME))
