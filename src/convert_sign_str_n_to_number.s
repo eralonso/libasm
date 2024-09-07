@@ -10,24 +10,25 @@ convert_sign_str_n_to_number: ; rdi(str), rsi(n)
 	while_loop:
 		cmp byte [rdi + rcx], 0 ; str[i] == 0
 		je calc_final_sign
-		cmp rcx, rsi ; i >= n
-		jge calc_final_sign
-		push rdx
-		push rcx
+		cmp rcx, rsi ; i == n
+		je calc_final_sign
+		push rdx ; store minus_sign_count in stack
+		push rcx ; store i in stack
+		push rsi ; store n in stack
 		push rdi ; store str in stack
-		mov rdi, [rdi + rcx] ; set rdi to character in position str[i]
+		mov dil, byte [rdi + rcx] ; set dil (lower 8 bits from rdi register) to character in position str[i]
 		call is_sign_symbol ; ret = is_sign_symbol(str[i])
-		mov r8, rdi
-		pop rdi
-		pop rcx
-		pop rdx
+		mov r8b, dil ; tmp = str[i]
+		pop rdi ; recover str from stack
+		pop rsi ; recover n from stack
+		pop rcx ; recover i from stack
+		pop rdx ; recover minus_sign_count from stack
 		cmp al, 0 ; ret == 0
 		je calc_final_sign
-		cmp byte r8, [minus_sign] ; str[i] != '-'
+		cmp r8b, [minus_sign] ; tmp != '-'
 		jne skip_add_minus_sign
 		inc rdx ; minus_sign_count++
 		skip_add_minus_sign:
-			;pop rdi ; recover str from stack
 			inc rcx ; i++
 			jmp while_loop
 	calc_final_sign:
