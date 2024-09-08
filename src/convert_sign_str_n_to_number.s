@@ -8,9 +8,9 @@ convert_sign_str_n_to_number: ; rdi(str), rsi(n)
 	xor rcx, rcx ; i = 0
 	xor rdx, rdx ; minus_sign_count = 0
 	while_loop:
-		cmp byte [rdi + rcx], 0 ; str[i] == 0
-		je calc_final_sign
 		cmp rcx, rsi ; i == n
+		je calc_final_sign
+		cmp byte [rdi + rcx], 0 ; str[i] == 0
 		je calc_final_sign
 		push rdx ; store minus_sign_count in stack
 		push rcx ; store i in stack
