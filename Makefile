@@ -6,7 +6,7 @@
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/02 18:06:40 by eralonso          #+#    #+#              #
-#    Updated: 2024/09/08 09:52:41 by eralonso         ###   ########.fr        #
+#    Updated: 2024/09/09 11:24:48 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,7 @@ SRCS_DIRS := $(subst $(SPACE),:,$(SRCS_DIRS))
 FILES := ft_strlen ft_strcpy ft_strcmp ft_write ft_read \
 		 ft_strdup convert_sign_to_number ft_strnchri \
 		 ft_strchri is_sign_symbol convert_sign_str_n_to_number \
-		 #ft_atoi_base
+		 ft_isspace #ft_atoi_base
 
 SUFFIX := s
 

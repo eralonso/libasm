@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 #include <stdlib.h>
 #include <sys/time.h>
 
@@ -43,6 +44,7 @@ ssize_t	ft_strnchri(const char *s, int c, size_t n);
 ssize_t	ft_strchri(const char *s, int c);
 int		is_sign_symbol(int c);
 char	convert_sign_str_n_to_number(const char *str, const size_t n);
+int		ft_isspace(int c);
 //{
 //	size_t	len = 0;
 //
@@ -376,6 +378,32 @@ void	test_convert_sign_str_n_to_number(void)
 	}
 }
 
+void	__test_isspace_time(int (*isspace_pointer)(int), char *name, int c)
+{
+	unsigned long	start;
+	unsigned long	end;
+	int				res;
+
+	start = get_time();
+	res = isspace_pointer(c);
+	end = get_time();
+	printf("%s(%i) == %i in %lu microseconds\n", name, c, res, end - start);
+}
+
+void	test_isspace(void)
+{
+	char	strs[] = {'\0', '\r', ' ', 'f', '\f', '\a', '\b', '\t', 'g', '	', '\v', '\n'};
+	int		strs_len = sizeof(strs) / sizeof(*strs);
+
+	printf("TEST: ft_isspace VS isspace\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_isspace_time(isspace, "\tisspace", strs[i]);
+		__test_isspace_time(ft_isspace, "\tft_isspace", strs[i]);
+	}
+}
+
 int	main(void)
 {
 	void	(*tests[])(void) = {
@@ -383,11 +411,11 @@ int	main(void)
 		test_write, test_read, test_strdup,
 		test_convert_sign_to_number, test_strnchri,
 		test_strchri, test_is_sign_symbol, 
-		test_convert_sign_str_n_to_number
+		test_convert_sign_str_n_to_number, test_isspace
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
-	for	(int test = tests_size - 4; test < tests_size - 3; test++)
+	for	(int test = tests_size - 1; test < tests_size; test++)
 	{
 		tests[test]();
 		if (test < tests_size - 1)
