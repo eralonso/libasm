@@ -39,6 +39,7 @@ ssize_t	ft_write(int fd, const void *buf, size_t count);
 ssize_t	ft_read(int fd, void *buf, size_t count);
 char	*ft_strdup(const char *s);
 char	convert_sign_to_number(const char c);
+ssize_t	ft_strnchri(const char *s, int c, size_t n);
 ssize_t	ft_strchri(const char *s, int c);
 int		is_sign_symbol(int c);
 char	convert_sign_str_n_to_number(const char *str, const size_t n);
@@ -268,6 +269,34 @@ void	test_convert_sign_to_number(void)
 	}
 }
 
+void	__test_strnchri_time(ssize_t (*strnchri_pointer)(const char *, int, size_t), 
+			char *name, const char *str, int c, size_t n)
+{
+	unsigned long	start;
+	unsigned long	end;
+	ssize_t			pos;
+
+	start = get_time();
+	pos = strnchri_pointer(str, c, n);
+	end = get_time();
+	printf("%s(%s, %c, %zu) == %zi in %lu microseconds\n", name, str, c, n, pos, end - start);
+}
+
+void	test_strnchri(void)
+{
+	char	*strs[] = {"", "", "a", "baaaaaaaaaaaaaaba", "aaaaaaaaaaaaaaba"};
+	char	chrs[] = {'-', '\0', 'a', 'a', 'b'};
+	char	n[] = {1, 1, 0, 1, -1};
+	int		strs_len = sizeof(strs) / sizeof(*strs);
+
+	printf("TEST: STRNCHRI\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_strnchri_time(ft_strnchri, "\tft_strnchri", strs[i], chrs[i], n[i]);
+	}
+}
+
 void	__test_strchri_time(ssize_t (*strchri_pointer)(const char *, int), char *name, const char *str, int c)
 {
 	unsigned long	start;
@@ -352,12 +381,13 @@ int	main(void)
 	void	(*tests[])(void) = {
 		test_strlen, test_strcpy, test_strcmp,
 		test_write, test_read, test_strdup,
-		test_convert_sign_to_number, test_strchri,
-		test_is_sign_symbol, test_convert_sign_str_n_to_number
+		test_convert_sign_to_number, test_strnchri,
+		test_strchri, test_is_sign_symbol, 
+		test_convert_sign_str_n_to_number
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
-	for	(int test = tests_size - 1; test < tests_size; test++)
+	for	(int test = tests_size - 4; test < tests_size - 3; test++)
 	{
 		tests[test]();
 		if (test < tests_size - 1)
