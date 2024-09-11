@@ -1,13 +1,14 @@
-section .text
 global ft_strlen
 
+section .text
+
 ft_strlen:
-	mov rax, rdi ; tmp = str
+	mov rax, rdi ; ret = str
 	while_loop:
-		cmp byte [rax], 0 ; *tmp == 0
+		cmp byte [rax], 0 ; *ret == 0
 		je finish_function
-		inc rax ; tmp++
+		inc rax ; ret++
 		jmp while_loop
 	finish_function:
-		sub rax, rdi ; tmp -= str
-		ret ; end
+		sub rax, rdi ; ret -= str
+		ret ; return ret

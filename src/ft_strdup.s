@@ -1,11 +1,12 @@
-section .text
 global ft_strdup
 
 extern malloc, ft_strlen, ft_strcpy
 
 ; malloc uses rcx register for some stuff
 
-ft_strdup:
+section .text
+
+ft_strdup: ; rdi(s)
 	call ft_strlen ; ret = ft_strlen(s)
 	push rdi ; tmp = s
 	mov rdi, rax ; size = ret

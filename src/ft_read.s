@@ -1,18 +1,19 @@
-section .text
 global ft_read
 
 extern __errno_location
 
-ft_read:
+section .text
+
+ft_read: ; rdi(fd), rsi(buf), rdx(len)
 	mov rax, 0 ; set system call to read
-	syscall ; call
-	cmp rax, 0
-	jge finish_function ; read(fd, buf, len) >= 0
+	syscall ; ret = read(fd, buf, len)
+	cmp rax, 0 ; ret >= 0
+	jge finish_function
 	manage_errno:
-		mov rcx, rax ; tmp = error_value
-		call __errno_location ; get errno variable address
+		mov rcx, rax ; tmp = ret
+		call __errno_location ; ret = &errno ; get errno variable address
 		neg rcx ; tmp = -tmp ; absolute value
-		mov [rax], rcx ; *errno = tmp
-		mov rax, -1 ; return_value = -1
+		mov [rax], rcx ; *ret = tmp
+		mov rax, -1 ; ret = -1
 	finish_function:
-		ret
+		ret ; return ret

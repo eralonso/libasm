@@ -38,7 +38,7 @@ convert_sign_str_n_to_number: ; rdi(str), rsi(n)
 		je finish_function
 		neg al ; ret = -ret
 	finish_function:
-		ret
+		ret ; return ret
 
 section .rodata
 	minus_sign: db '-'

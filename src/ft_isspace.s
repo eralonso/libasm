@@ -4,20 +4,20 @@ extern ft_strnchri
 
 section .text
 
-ft_isspace:
+ft_isspace: ; rdi(c)
 	mov rsi, rdi
 	mov rdi, is_space_characters
 	mov rdx, is_space_characters_len
 	call ft_strnchri ; ret = ft_strnchri(is_space_characters, c, is_space_characters_len)
 	cmp rax, -1 ; ret == -1
 	je set_false
-	mov rax, 1
+	mov rax, 1 ; ret = 1
 	jmp finish_function
 	set_false:
-		mov rax, 0
+		mov rax, 0 ; ret = 0
 	finish_function:
-		ret
+		ret ; return ret
 
-section .data
+section .rodata
 	is_space_characters: db ` \t\n\r\f\v`
 	is_space_characters_len equ $ - is_space_characters
