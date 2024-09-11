@@ -6,7 +6,7 @@
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/02 18:06:40 by eralonso          #+#    #+#              #
-#    Updated: 2024/09/11 11:25:35 by eralonso         ###   ########.fr        #
+#    Updated: 2024/09/11 17:51:44 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,7 +47,8 @@ TESTS_SRCS_DIRS := $(subst $(SPACE),:,$(TESTS_SRCS_DIRS))
 FILES := ft_strlen ft_strcpy ft_strcmp ft_write ft_read \
 		 ft_strdup convert_sign_to_number ft_strnchri \
 		 ft_strchri is_sign_symbol convert_sign_str_n_to_number \
-		 ft_isspace #ft_atoi_base
+		 ft_isspace str_n_find_first_not_of str_find_first_not_of \
+		 has_char_duplicated #ft_atoi_base
 
 TESTS_FILES := main
 
@@ -62,6 +63,12 @@ DEPS := $(addprefix $(DEPS_ROOT),$(addsuffix .d,$(FILES)))
 TESTS_SRCS := $(addsuffix .$(TESTS_SUFFIX),$(TESTS_FILES))
 TESTS_OBJS := $(addprefix $(TESTS_OBJS_ROOT),$(addsuffix .o,$(TESTS_FILES)))
 TESTS_DEPS := $(addprefix $(TESTS_DEPS_ROOT),$(addsuffix .d,$(TESTS_FILES)))
+
+IS_WSL := $(shell if [ $$(uname -a | grep -c microsoft) -gt 0 ]; then echo -n "true"; else echo -n ""; fi)
+
+ifneq (,$(IS_WSL))
+TESTS_WSL_FLAGS := -no-pie
+endif
 
 ARFLAGS := Ucruvs
 
@@ -120,7 +127,7 @@ tests: $(TESTS_PROGRAM_NAME)
 $(TESTS_PROGRAM_NAME): $(TESTS_BIN_ROOT)
 
 $(TESTS_PROGRAM_NAME): $(NAME) $(TESTS_OBJS)
-	$(CC) $(CFLAGS) $(ASAN_FLAGS) $(DEBUG_FLAGS) $(TESTS_OBJS) $(NAME) -o $@
+	$(CC) $(TESTS_WSL_FLAGS) $(CFLAGS) $(ASAN_FLAGS) $(DEBUG_FLAGS) $(TESTS_OBJS) $(NAME) -o $@
 
 clean:
 	$(call remove_dir_file,$(OBJS_ROOT),$(OBJS))

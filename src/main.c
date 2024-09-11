@@ -8,6 +8,8 @@
 
 //TODO: #include "libasm.h"
 
+typedef int (*t_char_cmp)(int);
+
 typedef struct s_entry			t_entry;
 typedef struct s_linked_list	t_linked_list;
 
@@ -45,13 +47,9 @@ ssize_t	ft_strchri(const char *s, int c);
 int		is_sign_symbol(int c);
 char	convert_sign_str_n_to_number(const char *str, const size_t n);
 int		ft_isspace(int c);
-//{
-//	size_t	len = 0;
-//
-//	while (str[len])
-//		len++;
-//	return len;
-//}
+ssize_t	str_n_find_first_not_of(const char *str, int (*cmp_function)(int), size_t n);
+ssize_t	str_find_first_not_of(const char *str, int (*cmp_function)(int));
+int		has_char_duplicated(const char *str);
 
 char	*get_string_bool(int res)
 {
@@ -404,6 +402,95 @@ void	test_isspace(void)
 	}
 }
 
+void	__test_str_n_find_first_not_of_time(
+		ssize_t (*str_n_find_first_not_of_pointer)(const char *, 
+		t_char_cmp, size_t), char *name, const char *str,
+		t_char_cmp cmp_function, size_t n, char *cmp_function_name)
+{
+	unsigned long	start;
+	unsigned long	end;
+	ssize_t			pos;
+
+	start = get_time();
+	pos = str_n_find_first_not_of_pointer(str, cmp_function, n);
+	end = get_time();
+	printf("%s(%s, %s, %zu) == %zi in %lu microseconds\n", name, str,
+			cmp_function_name, n, pos, end - start);
+}
+
+void	test_str_n_find_first_not_of(void)
+{
+	char		*strs[] = {"a ", " a", "%1a", "abcd1", "1234a", "1111a"};
+	t_char_cmp	cmp[] = {isspace, isspace, isalnum, isalpha, isdigit, isalpha};
+	char		*cmp_names[] = {"isspace", "isspace", "isalnum", "isalpha", "isdigit", "isalpha"};
+	size_t		n[] = {1, 1, 0, 4, 5, -1};
+	int			strs_len = sizeof(strs) / sizeof(*strs);
+
+	printf("TEST: STR_N_FIND_FIRST_NOT_OF\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_str_n_find_first_not_of_time(str_n_find_first_not_of, "\tstr_n_find_first_not_of", strs[i], cmp[i], n[i], cmp_names[i]);
+	}
+}
+
+void	__test_str_find_first_not_of_time(
+		ssize_t (*str_find_first_not_of_pointer)(const char *, 
+		t_char_cmp), char *name, const char *str,
+		t_char_cmp cmp_function, char *cmp_function_name)
+{
+	unsigned long	start;
+	unsigned long	end;
+	ssize_t			pos;
+
+	start = get_time();
+	pos = str_find_first_not_of_pointer(str, cmp_function);
+	end = get_time();
+	printf("%s(%s, %s) == %zi in %lu microseconds\n", name, str,
+			cmp_function_name, pos, end - start);
+}
+
+void	test_str_find_first_not_of(void)
+{
+	char		*strs[] = {"a ", " a", "%1a", "abcd1", "1234a", "aaaa"};
+	t_char_cmp	cmp[] = {isspace, isspace, isalnum, isalpha, isdigit, isalpha};
+	char		*cmp_names[] = {"isspace", "isspace", "isalnum", "isalpha", "isdigit", "isalpha"};
+	int			strs_len = sizeof(strs) / sizeof(*strs);
+
+	printf("TEST: STR_FIND_FIRST_NOT_OF\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_str_find_first_not_of_time(str_find_first_not_of, "\tstr_find_first_not_of", strs[i], cmp[i], cmp_names[i]);
+	}
+}
+
+void	__test_has_char_duplicated_time(
+		int (*has_char_duplicated_pointer)(const char *), char *name, char *str)
+{
+	unsigned long	start;
+	unsigned long	end;
+	int				res;
+
+	start = get_time();
+	res = has_char_duplicated_pointer(str);
+	end = get_time();
+	printf("%s(%s) == %i in %lu microseconds\n", name, str, res, end - start);
+}
+
+void	test_has_char_duplicated(void)
+{
+	char	*strs[] = {"", "hola mund", "hola mundo", "oabcdefghijklmno"};
+	int		strs_len = sizeof(strs) / sizeof(*strs);
+
+	printf("TEST: HAS_CHAR_DUPLICATED\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_has_char_duplicated_time(has_char_duplicated, "\thas_char_duplicated", strs[i]);
+	}
+}
+
 int	main(void)
 {
 	void	(*tests[])(void) = {
@@ -411,8 +498,11 @@ int	main(void)
 		test_write, test_read, test_strdup,
 		test_convert_sign_to_number, test_strnchri,
 		test_strchri, test_is_sign_symbol, 
-		test_convert_sign_str_n_to_number, test_isspace
+		test_convert_sign_str_n_to_number, test_isspace,
+		test_str_n_find_first_not_of, test_str_find_first_not_of,
+		test_has_char_duplicated
 	};
+	
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
 	for	(int test = tests_size - 1; test < tests_size; test++)

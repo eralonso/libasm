@@ -8,13 +8,13 @@ has_char_duplicated: ; rdi(str)
     L1:
         cmp byte [rdi + rcx], 0 ; str[i]
         je finish_function
-        mov rsi, [rdi + rcx] ; tmp = str[i]
+        mov sil, byte [rdi + rcx] ; tmp = str[i]
         mov rdx, rcx ; j = i
 		inc rdx ; rdx++
         L2:
             cmp byte [rdi + rdx], 0 ; str[j] == 0
             je L1_iter
-            cmp byte [rdi + rdx], rsi ; str[j] == tmp
+            cmp byte [rdi + rdx], sil ; str[j] == tmp
             je set_is_duplicated
             inc rdx ;  j++
             jmp L2
