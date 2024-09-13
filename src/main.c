@@ -50,6 +50,7 @@ int		ft_isspace(int c);
 ssize_t	str_n_find_first_not_of(const char *str, int (*cmp_function)(int), size_t n);
 ssize_t	str_find_first_not_of(const char *str, int (*cmp_function)(int));
 int		has_char_duplicated(const char *str);
+int		str_has_min_size(const char *str, const size_t min_size);
 
 char	*get_string_bool(int res)
 {
@@ -491,6 +492,35 @@ void	test_has_char_duplicated(void)
 	}
 }
 
+void	__test_str_has_min_size_time(
+		int (*str_has_min_size_pointer)(const char *, size_t), char *name, char *str, size_t size)
+{
+	unsigned long	start;
+	unsigned long	end;
+	int				res;
+
+	start = get_time();
+	res = str_has_min_size_pointer(str, size);
+	end = get_time();
+	printf("%s(%s, %zu) == %i in %lu microseconds\n", name, str, size, res, end - start);
+}
+
+#include <limits.h>
+
+void	test_str_has_min_size(void)
+{
+	char	*strs[] = {"", "hola mund", "hola mundo", "oabcdefghijklmno"};
+	size_t	size[] = {0, 10, 10, ULLONG_MAX};
+	int		strs_len = sizeof(strs) / sizeof(*strs);
+
+	printf("TEST: STR_HAS_MIN_SIZE\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_str_has_min_size_time(str_has_min_size, "\tstr_has_min_size", strs[i], size[i]);
+	}
+}
+
 int	main(void)
 {
 	void	(*tests[])(void) = {
@@ -500,7 +530,7 @@ int	main(void)
 		test_strchri, test_is_sign_symbol, 
 		test_convert_sign_str_n_to_number, test_isspace,
 		test_str_n_find_first_not_of, test_str_find_first_not_of,
-		test_has_char_duplicated
+		test_has_char_duplicated, test_str_has_min_size
 	};
 	
 	int		tests_size = sizeof(tests) / sizeof(*tests);
