@@ -6,7 +6,7 @@
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/02 18:06:40 by eralonso          #+#    #+#              #
-#    Updated: 2024/09/12 09:27:02 by eralonso         ###   ########.fr        #
+#    Updated: 2024/09/13 14:59:13 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -73,11 +73,11 @@ endif
 ARFLAGS := Ucruvs
 
 AS := nasm
-ASFLAGS := -f elf64 -w+regsize
+ASFLAGS := -f elf64 #-w+regsize -w+label-orphan # <- These flags are set by default
 AS_MAKEFILE_DEPENDCY_FLAG := -MD
 
 CFLAGS := -Wall -Wextra -Werror
-ASAN_FLAGS := -fsanitize=address
+ASAN_FLAGS := #-fsanitize=address
 DEBUG_FLAGS := -g
 TESTS_DEPS_FLAGS := -MMD -MF
 
