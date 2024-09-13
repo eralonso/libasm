@@ -51,6 +51,7 @@ ssize_t	str_n_find_first_not_of(const char *str, int (*cmp_function)(int), size_
 ssize_t	str_find_first_not_of(const char *str, int (*cmp_function)(int));
 int		has_char_duplicated(const char *str);
 int		str_has_min_size(const char *str, const size_t min_size);
+int		is_valid_base(const char *str);
 
 char	*get_string_bool(int res)
 {
@@ -521,6 +522,32 @@ void	test_str_has_min_size(void)
 	}
 }
 
+void	__test_is_valid_base_time(
+		int (*is_valid_base_pointer)(const char *), char *name, char *str)
+{
+	unsigned long	start;
+	unsigned long	end;
+	int				res;
+
+	start = get_time();
+	res = is_valid_base_pointer(str);
+	end = get_time();
+	printf("%s(%s) == %i in %lu microseconds\n", name, str, res, end - start);
+}
+
+void	test_is_valid_base(void)
+{
+	char	*strs[] = {"", "1", "hola mund", "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
+	int		strs_len = sizeof(strs) / sizeof(*strs);
+
+	printf("TEST: IS_VALID_BASE\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_is_valid_base_time(is_valid_base, "\tis_valid_base", strs[i]);
+	}
+}
+
 int	main(void)
 {
 	void	(*tests[])(void) = {
@@ -530,7 +557,8 @@ int	main(void)
 		test_strchri, test_is_sign_symbol, 
 		test_convert_sign_str_n_to_number, test_isspace,
 		test_str_n_find_first_not_of, test_str_find_first_not_of,
-		test_has_char_duplicated, test_str_has_min_size
+		test_has_char_duplicated, test_str_has_min_size,
+		test_is_valid_base
 	};
 	
 	int		tests_size = sizeof(tests) / sizeof(*tests);

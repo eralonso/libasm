@@ -6,7 +6,7 @@
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/02 18:06:40 by eralonso          #+#    #+#              #
-#    Updated: 2024/09/13 14:59:13 by eralonso         ###   ########.fr        #
+#    Updated: 2024/09/13 16:00:44 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,7 +48,7 @@ FILES := ft_strlen ft_strcpy ft_strcmp ft_write ft_read \
 		 ft_strdup convert_sign_to_number ft_strnchri \
 		 ft_strchri is_sign_symbol convert_sign_str_n_to_number \
 		 ft_isspace str_n_find_first_not_of str_find_first_not_of \
-		 has_char_duplicated str_has_min_size #ft_atoi_base
+		 has_char_duplicated str_has_min_size is_valid_base #ft_atoi_base
 
 TESTS_FILES := main
 
@@ -77,7 +77,7 @@ ASFLAGS := -f elf64 #-w+regsize -w+label-orphan # <- These flags are set by defa
 AS_MAKEFILE_DEPENDCY_FLAG := -MD
 
 CFLAGS := -Wall -Wextra -Werror
-ASAN_FLAGS := #-fsanitize=address
+ASAN_FLAGS := -fsanitize=address
 DEBUG_FLAGS := -g
 TESTS_DEPS_FLAGS := -MMD -MF
 
