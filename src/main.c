@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <limits.h>
 
 //TODO: #include "libasm.h"
 
@@ -52,6 +53,7 @@ ssize_t	str_find_first_not_of(const char *str, int (*cmp_function)(int));
 int		has_char_duplicated(const char *str);
 int		str_has_min_size(const char *str, const size_t min_size);
 int		is_valid_base(const char *str);
+int		ft_atoi_base(const char *str, const char *base);
 
 char	*get_string_bool(int res)
 {
@@ -506,8 +508,6 @@ void	__test_str_has_min_size_time(
 	printf("%s(%s, %zu) == %i in %lu microseconds\n", name, str, size, res, end - start);
 }
 
-#include <limits.h>
-
 void	test_str_has_min_size(void)
 {
 	char	*strs[] = {"", "hola mund", "hola mundo", "oabcdefghijklmno"};
@@ -548,6 +548,34 @@ void	test_is_valid_base(void)
 	}
 }
 
+void	__test_atoi_base_time(
+		int (*atoi_base_pointer)(const char *, const char *),
+		char *name, char *str, char *base)
+{
+	unsigned long	start;
+	unsigned long	end;
+	int				res;
+
+	start = get_time();
+	res = atoi_base_pointer(str, base);
+	end = get_time();
+	printf("%s(%s, %s) == %i in %lu microseconds\n", name, str, base, res, end - start);
+}
+
+void	test_atoi_base(void)
+{
+	char	*strs[] = {"", "1", "hola mund", "holamund", "holamundo", "+123", "1234-", "-ab", "01234657"};
+	char	*bases[] = {"01", "01", "ho", "holamund", "01", "123", "1234", "ba", "01234657"};
+	int		strs_len = sizeof(strs) / sizeof(*strs);
+
+	printf("TEST: ATOI_BASE\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_atoi_base_time(ft_atoi_base, "\tft_atoi_base", strs[i], bases[i]);
+	}
+}
+
 int	main(void)
 {
 	void	(*tests[])(void) = {
@@ -558,7 +586,7 @@ int	main(void)
 		test_convert_sign_str_n_to_number, test_isspace,
 		test_str_n_find_first_not_of, test_str_find_first_not_of,
 		test_has_char_duplicated, test_str_has_min_size,
-		test_is_valid_base
+		test_is_valid_base, test_atoi_base
 	};
 	
 	int		tests_size = sizeof(tests) / sizeof(*tests);

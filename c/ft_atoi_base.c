@@ -6,7 +6,7 @@
 /*   By: eralonso <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/03 11:10:18 by eralonso          #+#    #+#             */
-/*   Updated: 2024/09/04 16:06:49 by eralonso         ###   ########.fr       */
+/*   Updated: 2024/09/14 15:40:11 by eralonso         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ typedef int	(*t_char_cmp)(int);
 typedef t_char_cmp	t_char_checker;
 typedef int	(*t_str_checker)(const char *);
 typedef int	(*t_atoi_base_test)(void);
+
+int	is_sign_symbol(int c);
 
 size_t	ft_strlen(const char *str)
 {
@@ -60,7 +62,7 @@ char	convert_sign_to_number(const char c)
 
 char	convert_sign_str_n_to_number(const char *str, const size_t n)
 {
-	int		i;
+	size_t	i;
 	char	final_sign;
 	int		minus_sign_count;
 
@@ -142,7 +144,7 @@ int	has_char_duplicated(const char *str)
 
 int	str_has_min_size(const char *str, const size_t min_size)
 {
-	return (str && ft_strlen(str) >= min_size)
+	return (str && ft_strlen(str) >= min_size);
 }
 
 static int	__has_base_min_size(const char *base)
@@ -209,11 +211,12 @@ static int	__convert_to_int_from_base(const char *str, const char *base)
 	value = 0;
 	number = 0;
 	base_len = ft_strlen(base);
-	while (str[i] && value >= 0)
+	while (str[i])
 	{
 		value = ft_strchri(base, str[i]);
-		if (value >= 0)
-			number = number * base_len + value;
+		if (value < 0)
+			break ;
+		number = number * base_len + value;
 		i++;
 	}
 	return (number);
@@ -226,20 +229,16 @@ static int	__ft_atoi_base(const char *str, const char *base)
 	int		pos;
 	int		last_sign_pos;
 
-	number = 0;
-	sign = 1;
 	pos = str_find_first_not_of(str, ft_isspace);
 	if (pos == -1)
 		return (0);
-	if (is_sign_symbol(str[pos]))
-	{
-		last_sign_pos = str_find_first_not_of(str + pos, is_sign_symbol);
-		if (last_sign_pos == -1)
-			return (0);
-		sign = convert_sign_str_n_to_number(str + pos, last_sign_pos);
-		pos += last_sign_pos;
-	}
-	number = __convert_to_int_from_base(str + pos, base);
+	str += pos;
+	last_sign_pos = str_find_first_not_of(str, is_sign_symbol);
+	if (last_sign_pos == -1)
+		return (0);
+	sign = convert_sign_str_n_to_number(str, last_sign_pos);
+	str += last_sign_pos;
+	number = __convert_to_int_from_base(str, base);
 	return (number * sign);
 }
 
@@ -314,7 +313,7 @@ int	test_conversion(void)
 		"-b", "+b", "-+b",
 		"+-ab", "b-", "b-a",
 		"-abb+b", " +bab", " -bab",
-		"      +bab", "     -bab", "    +-bab"
+		"      +bab", "     -bab", "   --+-+-bab"
 	};
 	const char	*base = "ab";
 	//const char	*bases[] = {
@@ -327,10 +326,10 @@ int	test_conversion(void)
 		2, 4, 2,
 		3, 7, 62,
 		2, 1, 1,
-		-1, 1, 0,
-		0, 1, 1,
+		-1, 1, -1,
+		-1, 1, 1,
 		-3, 5, -5,
-		5, -5, 0
+		5, -5, 5
 	};
 	const int	test_amount = sizeof(strs) / sizeof(*strs);
 	int			test;
