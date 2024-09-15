@@ -55,7 +55,7 @@ __ft_atoi_base: ; rdi(str), rsi(base)
     call __convert_to_int_from_base ; ret = __convert_to_int_from_base(str, base)
     pop rcx
 	movsx rcx, cl ; extend sign over the entire register ; 0000 1111 -> 1111 1111
-    imul rax, rcx ; ret *= sign
+    imul rcx ; ret *= sign
     ret ; return ret
 
 __convert_to_int_from_base: ; rdi(str), rsi(base)
