@@ -564,8 +564,8 @@ void	__test_atoi_base_time(
 
 void	test_atoi_base(void)
 {
-	char	*strs[] = {"", "1", "hola mund", "holamund", "holamundo", "+123", "1234-", "-ab", "01234657"};
-	char	*bases[] = {"01", "01", "ho", "holamund", "01", "123", "1234", "ba", "01234657"};
+	char	*strs[] = {"-ab", "", "1", "hola mund", "holamund", "holamundo", "+123", "1234-", "     --abc", "01234657"};
+	char	*bases[] = {"ba", "01", "01", "ho", "holamund", "01", "123", "1234", "ba", "01234657"};
 	int		strs_len = sizeof(strs) / sizeof(*strs);
 
 	printf("TEST: ATOI_BASE\n");

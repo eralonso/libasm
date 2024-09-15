@@ -54,13 +54,15 @@ __ft_atoi_base: ; rdi(str), rsi(base)
 	push rcx
     call __convert_to_int_from_base ; ret = __convert_to_int_from_base(str, base)
     pop rcx
+	movsx rcx, cl ; extend sign over the entire register ; 0000 1111 -> 1111 1111
     imul rax, rcx ; ret *= sign
     ret ; return ret
 
 __convert_to_int_from_base: ; rdi(str), rsi(base)
 	push rsi
 	push rdi
-	call ft_strlen ; ret = ft_strlen(str)
+	mov rdi, rsi 
+	call ft_strlen ; ret = ft_strlen(base)
 	pop rdi
 	pop rsi
 
@@ -72,22 +74,24 @@ __convert_to_int_from_base: ; rdi(str), rsi(base)
 		cmp byte [rdi], 0 ; *str == 0
 		je finish_function
 		push rax
-		push rcx
+		push rdx
 		push rsi
 		push rdi
+		mov r8, rdi
 		mov rdi, rsi
-		movzx rsi, byte [rdi]
+		movzx rsi, byte [r8]
 		call ft_strchri ; ret = ft_strchri(base, str[i])
 		cmp rax, 0 ; ret < 0
-		mov rdx, rax ; value = ret
+		mov rcx, rax ; value = ret
 		pop rdi
 		pop rsi
-		pop rcx
+		pop rdx
 		pop rax
 		jl finish_function
-		imul rax, rsi ; ret *= base_len
-		add rax, rdx ; ret += value
+		imul rax, rdx ; ret *= base_len
+		add rax, rcx ; ret += value
 		inc rdi
+		jmp loop_start
 
 return_zero:
 	mov rax, 0
