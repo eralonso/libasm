@@ -713,7 +713,6 @@ int	main(void)
 		test_has_char_duplicated, test_str_has_min_size,
 		test_is_valid_base, atoi_base_main
 	};
-	
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
 	for	(int test = tests_size - 1; test < tests_size; test++)
