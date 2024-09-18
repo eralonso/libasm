@@ -1,4 +1,4 @@
-%include "src/t_list.mac"
+%include "t_list.mac"
 
 global ft_list_push_front
 

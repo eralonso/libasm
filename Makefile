@@ -6,7 +6,7 @@
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/02 18:06:40 by eralonso          #+#    #+#              #
-#    Updated: 2024/09/18 11:39:59 by eralonso         ###   ########.fr        #
+#    Updated: 2024/09/18 15:25:22 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,7 @@ SRCS_ROOT := src/
 OBJS_ROOT := .obj/
 DEPS_ROOT := .dep/
 BIN_ROOT := bin/
+INC_ROOT := inc/
 
 TESTS_SRCS_ROOT := src/
 TESTS_OBJS_ROOT := .obj/
@@ -38,6 +39,8 @@ SRCS_DIRS := ./
 SRCS_DIRS := $(subst :,$(SPACE),$(SRCS_DIRS))
 SRCS_DIRS := $(addprefix $(SRCS_ROOT),$(SRCS_DIRS))
 SRCS_DIRS := $(subst $(SPACE),:,$(SRCS_DIRS))
+
+INC_DIRS := $(INC_ROOT)
 
 TESTS_SRCS_DIRS := ./
 TESTS_SRCS_DIRS := $(subst :,$(SPACE),$(TESTS_SRCS_DIRS))
@@ -65,11 +68,13 @@ TESTS_SRCS := $(addsuffix .$(TESTS_SUFFIX),$(TESTS_FILES))
 TESTS_OBJS := $(addprefix $(TESTS_OBJS_ROOT),$(addsuffix .o,$(TESTS_FILES)))
 TESTS_DEPS := $(addprefix $(TESTS_DEPS_ROOT),$(addsuffix .d,$(TESTS_FILES)))
 
+#WSL specific
 IS_WSL := $(shell if [ $$(uname -a | grep -c microsoft) -gt 0 ]; then echo -n "true"; else echo -n ""; fi)
 
 ifneq (,$(IS_WSL))
 TESTS_WSL_FLAGS := -no-pie
 endif
+#
 
 ARFLAGS := Ucruvs
 
@@ -86,6 +91,8 @@ NAME := $(addprefix $(BIN_ROOT),$(NAME))
 TESTS_PROGRAM_NAME := $(addprefix $(TESTS_BIN_ROOT),$(TESTS_PROGRAM_NAME))
 
 TO_CREATE_DIRS := $(OBJS_ROOT) $(DEPS_ROOT) $(BIN_ROOT)
+
+INCLUDES := $(addprefix -I,$(INC_DIRS))
 
 vpath %.$(SUFFIX) $(SRCS_DIRS)
 vpath %.$(TESTS_SUFFIX) $(TESTS_SRCS_DIRS)
@@ -104,7 +111,7 @@ endef
 #RULES
 
 $(OBJS_ROOT)%.o: %.$(SUFFIX) $(OBJS_ROOT) $(DEPS_ROOT)
-	$(AS) $(ASFLAGS) $(AS_MAKEFILE_DEPENDCY_FLAG) $(DEPS_ROOT)$(basename $*).d $< -o $@
+	$(AS) $(ASFLAGS) $(AS_MAKEFILE_DEPENDCY_FLAG) $(DEPS_ROOT)$(basename $*).d $(INCLUDES) $< -o $@
 
 $(TESTS_OBJS_ROOT)%.o: %.$(TESTS_SUFFIX) $(TESTS_OBJS_ROOT) $(TESTS_DEPS_ROOT)
 	$(CC) -c $(CFLAGS) $(ASAN_FLAGS) $(DEBUG_FLAGS) $(TESTS_DEPS_FLAGS) $(TESTS_DEPS_ROOT)$(basename $*).d $< -o $@
