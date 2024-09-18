@@ -44,6 +44,16 @@ struct	s_linked_list
 	t_linked_list		*next;
 };
 
+//BONUS
+typedef struct s_list t_list;
+
+struct s_list
+{
+	void	*data;
+	t_list	*next;
+};
+//
+
 size_t	ft_strlen(const char *str);
 char	*ft_strcpy(char *dst, const char *src);
 int		ft_strcmp(const char *s1, const char *s2);
@@ -62,6 +72,10 @@ int		has_char_duplicated(const char *str);
 int		str_has_min_size(const char *str, const size_t min_size);
 int		is_valid_base(const char *str);
 int		ft_atoi_base(const char *str, const char *base);
+
+//BONUS
+t_list	*ft_create_elem(void *data);
+//
 
 char	*get_string_bool(int res)
 {
@@ -701,6 +715,33 @@ void	atoi_base_main(void)
 	return ;
 }
 
+void	__test_create_elem_time(
+		t_list *(*create_elem_pointer)(void *), char *name, void *data)
+{
+	unsigned long	start;
+	unsigned long	end;
+	t_list			*res;
+
+	start = get_time();
+	res = create_elem_pointer(data);
+	end = get_time();
+	printf("%s(%p) == %p && content == %p in %lu microseconds\n", name, res, res->data, res, end - start);
+	free(res);
+}
+
+void	test_create_elem(void)
+{
+	void	*strs[] = {"", "1", "hola mund", "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
+	int		strs_len = sizeof(strs) / sizeof(*strs);
+
+	printf("TEST: CREATE_ELEM\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_create_elem_time(ft_create_elem, "\tft_create_elem", strs[i]);
+	}
+}
+
 int	main(void)
 {
 	void	(*tests[])(void) = {
@@ -711,7 +752,7 @@ int	main(void)
 		test_convert_sign_str_n_to_number, test_isspace,
 		test_str_n_find_first_not_of, test_str_find_first_not_of,
 		test_has_char_duplicated, test_str_has_min_size,
-		test_is_valid_base, atoi_base_main
+		test_is_valid_base, atoi_base_main, test_create_elem
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
