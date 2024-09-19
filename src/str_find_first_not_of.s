@@ -1,6 +1,7 @@
 global str_find_first_not_of
 
-extern ft_strlen, str_n_find_first_not_of
+extern ft_strlen
+extern str_n_find_first_not_of
 
 section .text
 

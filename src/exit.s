@@ -12,9 +12,9 @@
 
 section .text
 
-global sip ; _start == default entry symbol
+global exit
 
-sip:
-	mov rax, 60
-	mov rdi, 42
+exit: ; rdi(n)
+	mov rax, 60 ; exit system call number
 	syscall
+	ret ; return

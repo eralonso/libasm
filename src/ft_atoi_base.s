@@ -1,6 +1,12 @@
 global ft_atoi_base
 
-extern is_valid_base, str_find_first_not_of, ft_isspace, is_sign_symbol, convert_sign_str_n_to_number, ft_strchri, ft_strlen
+extern is_valid_base
+extern str_find_first_not_of
+extern ft_isspace
+extern is_sign_symbol
+extern convert_sign_str_n_to_number
+extern ft_strchri
+extern ft_strlen
 
 section .text
 

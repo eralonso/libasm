@@ -1,6 +1,9 @@
 global is_valid_base
 
-extern str_has_min_size, has_char_duplicated, ft_isspace, is_sign_symbol
+extern str_has_min_size
+extern has_char_duplicated
+extern ft_isspace
+extern is_sign_symbol
 
 %define BASE_MIN_SIZE 2
 

@@ -6,8 +6,8 @@ section .text
 
 ft_isspace: ; rdi(c)
 	mov rsi, rdi
-	mov rdi, is_space_characters
-	mov rdx, is_space_characters_len
+	mov rdi, [is_space.characters]
+	mov rdx, is_space.len
 	call ft_strnchri ; ret = ft_strnchri(is_space_characters, c, is_space_characters_len)
 	cmp rax, -1 ; ret == -1
 	je set_false
@@ -19,5 +19,7 @@ ft_isspace: ; rdi(c)
 		ret ; return ret
 
 section .rodata
-	is_space_characters: db ` \t\n\r\f\v`
-	is_space_characters_len equ $ - is_space_characters
+	is_space: 
+		db ` \t\n\r\f\v`
+		.len equ $ - is_space
+		.characters dq is_space
