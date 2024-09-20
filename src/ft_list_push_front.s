@@ -10,9 +10,6 @@ ft_list_push_front: ; rdi(begin_list), rsi(data)
 	test rdi, rdi ; begin_list == 0
 	jz finish_function
 
-	cmp qword [rdi], 0 ; *begin_list == 0
-	jz finish_function
-
 	push rdi
 	mov rdi, rsi
 	call ft_create_elem ; ret = ft_create_elem(data)

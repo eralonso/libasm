@@ -75,6 +75,8 @@ int		ft_atoi_base(const char *str, const char *base);
 
 //BONUS
 t_list	*ft_create_elem(void *data);
+void	ft_list_push_front(t_list **begin_list, void *data);
+int		ft_list_size(t_list *begin_list);
 //
 
 char	*get_string_bool(int res)
@@ -725,7 +727,7 @@ void	__test_create_elem_time(
 	start = get_time();
 	res = create_elem_pointer(data);
 	end = get_time();
-	printf("%s(%p) == %p && content == %p in %lu microseconds\n", name, res, res->data, res, end - start);
+	printf("%s(%p) == %p && content == %p && next == %p in %lu microseconds\n", name, data, res, res->data, res->next, end - start);
 	free(res);
 }
 
@@ -742,6 +744,96 @@ void	test_create_elem(void)
 	}
 }
 
+void	clear_list(t_list *begin)
+{
+	t_list	*tmp;
+
+	while (begin != 0)
+	{
+		tmp = begin->next;
+		free(begin);
+		begin = tmp;
+	}
+	return ;
+}
+
+void	print_list(t_list *begin)
+{
+	printf("list = ");
+	while (begin != 0)
+	{
+		printf("node: %p, node->data: %p", begin, begin->data);
+		begin = begin->next;
+		if (begin)
+			printf(" | ");
+	}
+	printf("\n");
+	return ;
+}
+
+void	__test_list_push_front_time(
+		void (*list_push_front_pointer)(t_list **, void *),
+		char *name, t_list **begin_list, void *data)
+{
+	unsigned long	start;
+	unsigned long	end;
+
+	printf("BEFORE\n");
+	print_list(*begin_list);
+	start = get_time();
+	list_push_front_pointer(begin_list, data);
+	end = get_time();
+	printf("%s(%p, %p) in %lu microseconds\n", name, begin_list, data, end - start);
+	printf("AFTER\n");
+	print_list(*begin_list);
+	printf("\n");
+}
+
+void	test_list_push_front(void)
+{
+	void	*strs[] = {"", "1", "hola mund", "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
+	int		strs_len = sizeof(strs) / sizeof(*strs);
+	t_list	*begin_list = NULL;
+
+	printf("TEST: LIST_PUSH_FRONT\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_list_push_front_time(ft_list_push_front, "\tft_list_push_front", &begin_list, strs[i]);
+	}
+	clear_list(begin_list);
+}
+
+void	__test_list_size_time(
+		int (*list_size_pointer)(t_list *), char *name, t_list *begin_list)
+{
+	unsigned long	start;
+	unsigned long	end;
+	int				size;
+
+	start = get_time();
+	size = list_size_pointer(begin_list);
+	end = get_time();
+	printf("%s(%p) == %i in %lu microseconds\n", name, begin_list, size, end - start);
+	printf("\n");
+}
+
+void	test_list_size(void)
+{
+	void	*strs[] = {"", "1", NULL, "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
+	int		strs_len = sizeof(strs) / sizeof(*strs);
+	t_list	*begin_list = NULL;
+
+	printf("TEST: LIST_SIZE\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_list_size_time(ft_list_size, "\tft_list_size", begin_list);
+		ft_list_push_front(&begin_list, strs[i]);
+	}
+	clear_list(begin_list);
+}
+
 int	main(void)
 {
 	void	(*tests[])(void) = {
@@ -752,7 +844,8 @@ int	main(void)
 		test_convert_sign_str_n_to_number, test_isspace,
 		test_str_n_find_first_not_of, test_str_find_first_not_of,
 		test_has_char_duplicated, test_str_has_min_size,
-		test_is_valid_base, atoi_base_main, test_create_elem
+		test_is_valid_base, atoi_base_main, test_create_elem,
+		test_list_push_front, test_list_size//, test_list_sort
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
