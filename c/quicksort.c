@@ -144,6 +144,26 @@ int	qs__set_rigth_place_pivot(int *arr, int init, int end, int pivot_index)
 // 2.1.1.2.2.1: 4 -> low = 3 | high = 3 // Because low isn't lower than high then it's already sort
 // 2.1.1.2.2.2: 6 -> low = 5 | high = 4 // Because low isn't lower than high then it's already sort
 
+
+// 1: 8 3 4 7 2 1 5 9 6 -> low = 0 | high = 8
+// pivot: 7
+// 6 3 4 7 2 1 5 9 8 -> i = 0 | j = 8
+// 6 3 4 5 2 1 7 9 8 -> i = 7 | j = 6 | pivot_index = 3
+// pivot index: 6
+// 2.1: 6 3 4 5 2 1 -> low = 0 | high = 5
+// pivot: 5
+// 1 3 4 5 2 6 -> i = 0 | j = 5
+// 1 3 4 2 5 6 -> i = 5 | j = 4 | pivot_index = 3
+// pivot index: 4
+// 2.2: 9 8 -> low = 7 | high = 8
+// pivot: 9
+// 8 9 -> i = 8 | j = 8 | pivot_index: 7
+// pivot index: 8
+// 2.1.1: 1 3 4 2 -> low = 0 | high = 3
+// pivot: 3
+// 1 3 2 4 -> i = 2 | j = 3
+// 1 2 3 4 -> i = 3 | j = 2 | pivot_index = 1
+
 void	qs__loop(int *arr, int init, int end)
 {
 	int	pivot_index;

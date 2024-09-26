@@ -16,6 +16,9 @@ typedef t_char_cmp	t_char_checker;
 typedef int	(*t_str_checker)(const char *);
 typedef int	(*t_atoi_base_test)(void);
 //END: ATOI_BASE_MAIN
+//
+//
+typedef int (*t_list_data_cmp)(void *, void *);
 
 //typedef int (*t_char_cmp)(int);
 
@@ -77,6 +80,10 @@ int		ft_atoi_base(const char *str, const char *base);
 t_list	*ft_create_elem(void *data);
 void	ft_list_push_front(t_list **begin_list, void *data);
 int		ft_list_size(t_list *begin_list);
+void	ft_list_swap(t_list *node1, t_list *node2);
+t_list	*ft_list_at(t_list *begin_list, unsigned int nbr);
+void	ft_list_sort(t_list **begin_list, t_list_data_cmp cmp);
+void	ft_list_remove_if(t_list **begin_list, void *data_ref, t_list_data_cmp cmp, void (*free_fct)(void *));
 //
 
 char	*get_string_bool(int res)
@@ -759,13 +766,17 @@ void	clear_list(t_list *begin)
 
 void	print_list(t_list *begin)
 {
+	unsigned int	index;
+
 	printf("list = ");
+	index = 0;
 	while (begin != 0)
 	{
-		printf("node: %p, node->data: %p", begin, begin->data);
+		printf("%u node: %p, node->data: %p", index, begin, begin->data);
 		begin = begin->next;
 		if (begin)
 			printf(" | ");
+		index++;
 	}
 	printf("\n");
 	return ;
@@ -834,6 +845,80 @@ void	test_list_size(void)
 	clear_list(begin_list);
 }
 
+void	__test_list_at_time(
+		t_list *(*list_at_pointer)(t_list *, unsigned int), char *name, t_list *begin_list, unsigned int nbr)
+{
+	unsigned long	start;
+	unsigned long	end;
+	t_list			*ret;
+
+	print_list(begin_list);
+	start = get_time();
+	ret = list_at_pointer(begin_list, nbr);
+	end = get_time();
+	printf("\n%s(%p, %u) == %p  in %lu microseconds\n", name, begin_list, nbr, ret, end - start);
+	printf("\n");
+}
+
+void	test_list_at(void)
+{
+	void			*strs[] = {"", "1", NULL, "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
+	unsigned int	position[] = {0, -1, 2, 9, 12, 3, 5, 4, 9};
+	int				strs_len = sizeof(strs) / sizeof(*strs);
+	t_list			*begin_list = NULL;
+
+	for (int i = 0; i < strs_len; i++)
+		ft_list_push_front(&begin_list, strs[i]);
+	printf("TEST: LIST_AT\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_list_at_time(ft_list_at, "\tft_list_at", begin_list, position[i]);
+	}
+	clear_list(begin_list);
+}
+
+void	__test_list_swap_time(
+		void (*list_swap_pointer)(t_list *, t_list *), char *name, t_list *node1, t_list *node2)
+{
+	unsigned long	start;
+	unsigned long	end;
+
+	if (node1)
+		printf("node1->data: %p ", node1->data);
+	if (node2)
+		printf("node2->data: %p", node2->data);
+	start = get_time();
+	list_swap_pointer(node1, node2);
+	end = get_time();
+	printf("\n%s(%p, %p),  in %lu microseconds\n", name, node1, node2, end - start);
+	if (node1)
+		printf("node1->data: %p ", node1->data);
+	if (node2)
+		printf("node2->data: %p", node2->data);
+	printf("\n");
+}
+
+void	test_list_swap(void)
+{
+	void			*strs[] = {"", "1", NULL, "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
+	unsigned int	position[][2] = {{0, -1}, {-1, 2}, {-1, -1}, {0, 0}, {0, 1}, {0, 6}, {0, 1}, {0, 2}, {0, 1}};
+	int				strs_len = sizeof(strs) / sizeof(*strs);
+	t_list			*begin_list = NULL;
+
+	for (int i = 0; i < strs_len; i++)
+		ft_list_push_front(&begin_list, strs[i]);
+	printf("TEST: LIST_SWAP\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_list_swap_time(ft_list_swap, "\tft_list_swap",
+				ft_list_at(begin_list, position[i][0]),
+				ft_list_at(begin_list, position[i][1]));
+	}
+	clear_list(begin_list);
+}
+
 int	main(void)
 {
 	void	(*tests[])(void) = {
@@ -845,7 +930,8 @@ int	main(void)
 		test_str_n_find_first_not_of, test_str_find_first_not_of,
 		test_has_char_duplicated, test_str_has_min_size,
 		test_is_valid_base, atoi_base_main, test_create_elem,
-		test_list_push_front, test_list_size//, test_list_sort
+		test_list_push_front, test_list_size, test_list_at,
+		test_list_swap //, test_list_sort
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
