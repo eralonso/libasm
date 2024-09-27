@@ -891,7 +891,7 @@ void	__test_list_swap_time(
 	start = get_time();
 	list_swap_pointer(node1, node2);
 	end = get_time();
-	printf("\n%s(%p, %p),  in %lu microseconds\n", name, node1, node2, end - start);
+	printf("\n%s(%p, %p) in %lu microseconds\n", name, node1, node2, end - start);
 	if (node1)
 		printf("node1->data: %p ", node1->data);
 	if (node2)

@@ -2,7 +2,7 @@
 
 global ft_list_sort
 
-extern ft_list_size
+extern ft_list_size, ft_list_swap
 
 section .text
 
@@ -94,6 +94,49 @@ get_optimal_pivot: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end)
 
 quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_index)
 	
+	get_init_node:
+		mov r9, rdx
+		call get_node ; ret = get_node(begin_list, init)
+		mov [init_node], rax
+
+	get_end_node:
+		mov r9, rcx
+		call get_node ; ret = get_node(begin_list, end)
+		mov [end_node], rax
+
+	get_pivot_node:
+		mov r9, r8
+		call get_node ; ret = get_node(begin_list, pivot_index)
+		mov [pivot], [rax + t_list.data] ; pivot = ret->data
+		
+	loop_start:
+		cmp rdx, rcx
+		jge loop_end
+
+	loop_end:
+		
+
+	ret ; return ret
+	
+	get_node: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_index), r9(nbr)
+		push rdi
+		push rsi
+		push rdx
+		push rcx
+		push r8
+		mov rdi, qword [rdi] ; begin_list = *begin_list
+		mov rsi, r9
+		call ft_list_at ; ret = ft_list_at(begin_list, nbr)
+		pop r8
+		pop rcx
+		pop rdx
+		pop rsi
+		pop rdi
 
 finish_function:
 	ret ; return
+
+section .bss
+	init_node resq 1
+	end_node resq 1
+	pivot resq 1
