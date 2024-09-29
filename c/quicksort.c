@@ -98,9 +98,9 @@ int	qs__set_rigth_place_pivot(int *arr, int init, int end, int pivot_index)
 	pivot = arr[pivot_index];
 	while (i < j)
 	{
-		while (arr[i] <= pivot && i <= end - 1)
+		while (arr[i] <= pivot && i < end)
 			i++;
-		while (arr[j] > pivot && j >= init + 1)
+		while (arr[j] > pivot && j > init)
 			j--;
 		if (i >= j)
 			break ;
