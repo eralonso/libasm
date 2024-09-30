@@ -167,10 +167,32 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 		pop r8
 		pop rsi
 		pop rdi
+
+		pivot_moved_check:
+
+			init_iter_check:
+				cmp r8, word [init_iter]
+				jne end_iter_check
+				movsx r8, word [init_iter]
+				jmp pivot_moved_check_end
+
+			end_iter_check:
+				cmp r8, word [end_iter]
+				jne pivot_moved_check_end
+				movsx r8, word [end_iter]
+
+		pivot_moved_check_end:
+
 		jmp loop_start
 
 	loop_end:
+		push rdi
+		push rsi
+		push r8
 		call ft_list_swap
+		pop r8
+		pop rsi
+		pop rdi
 
 	ret ; return ret
 	
