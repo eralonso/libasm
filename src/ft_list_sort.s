@@ -193,6 +193,7 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 		pop r8
 		pop rsi
 		pop rdi
+		movzx rax, [end_iter]
 
 	ret ; return ret
 	

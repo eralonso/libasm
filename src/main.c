@@ -18,7 +18,7 @@ typedef int	(*t_atoi_base_test)(void);
 //END: ATOI_BASE_MAIN
 //
 //
-typedef int (*t_list_data_cmp)(void *, void *);
+typedef int (*t_list_data_cmp)(const char *, const char *);
 
 //typedef int (*t_char_cmp)(int);
 
@@ -782,6 +782,24 @@ void	print_list(t_list *begin)
 	return ;
 }
 
+void	print_list_strings(t_list *begin)
+{
+	unsigned int	index;
+
+	printf("list = ");
+	index = 0;
+	while (begin != 0)
+	{
+		printf("%u node: %p, node->data: %s", index, begin, (char *)begin->data);
+		begin = begin->next;
+		if (begin)
+			printf(" | ");
+		index++;
+	}
+	printf("\n");
+	return ;
+}
+
 void	__test_list_push_front_time(
 		void (*list_push_front_pointer)(t_list **, void *),
 		char *name, t_list **begin_list, void *data)
@@ -919,6 +937,41 @@ void	test_list_swap(void)
 	clear_list(begin_list);
 }
 
+void	__test_list_sort_time(
+		void (*list_sort_pointer)(t_list **, t_list_data_cmp),
+		char *name, t_list **begin_list, t_list_data_cmp cmp)
+{
+	unsigned long	start;
+	unsigned long	end;
+
+	printf("BEFORE\n");
+	print_list_strings(*begin_list);
+	start = get_time();
+	list_sort_pointer(begin_list, cmp);
+	end = get_time();
+	printf("%s(%p, %s) in %lu microseconds\n", name, begin_list, "strcmp", end - start);
+	printf("AFTER\n");
+	print_list_strings(*begin_list);
+	printf("\n");
+}
+
+void	test_list_sort(void)
+{
+	void			*strs[] = {"", "1", "sd", "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
+	int				strs_len = sizeof(strs) / sizeof(*strs);
+	t_list			*begin_list = NULL;
+
+	for (int i = 0; i < strs_len; i++)
+		ft_list_push_front(&begin_list, strs[i]);
+	printf("TEST: LIST_SORT\n");
+	for (int i = 0; i < 1; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_list_sort_time(ft_list_sort, "\tft_list_sort", &begin_list, strcmp);
+	}
+	clear_list(begin_list);
+}
+
 int	main(void)
 {
 	void	(*tests[])(void) = {
@@ -931,7 +984,7 @@ int	main(void)
 		test_has_char_duplicated, test_str_has_min_size,
 		test_is_valid_base, atoi_base_main, test_create_elem,
 		test_list_push_front, test_list_size, test_list_at,
-		test_list_swap //, test_list_sort
+		test_list_swap, test_list_sort
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
