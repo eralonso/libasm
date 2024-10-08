@@ -29,7 +29,7 @@ ft_list_quicksort: ; rdi(begin_list), rsi(cmp)
 		pop rdi
 	
 	perform_quicksort:
-		mv rcx, rax ; end = ret
+		mov rcx, rax ; end = ret
 		xor rdx, rdx ; init = 0
 		dec rcx ; end--
 		call quicksort_loop ; quicksort_loop(begin_list, cmp, init, end)
@@ -121,7 +121,9 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 		loop_1_start:
 			push rdi
 			push rsi
-			mov rdi, [[init_node] + t_list.data]
+			mov rdi, [init_node] + t_list.data
+			mov rdi, [rdi]
+			; mov rdi, [[init_node] + t_list.data]
 			mov rsi, [pivot]
 			call cmp_function ; ret = cmp_function(init_node->data, pivot)
 			pop rsi
@@ -131,7 +133,11 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 			cmp [init_iter], rcx ; init_iter >= end
 			jg loop_1_end
 			inc byte [init_iter] ; init_iter++		
-			mov [init_node], [[init_node] + t_list.next] ; init_node = init_node->next		
+			push rdi
+			mov rdi, [init_node] + t_list.next
+			mov [init_node], [rdi]
+			; mov [init_node], [[init_node] + t_list.next] ; init_node = init_node->next		
+			pop rdi
 			jmp loop_1_start
 
 		loop_1_end:
@@ -139,7 +145,9 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 		loop_2_start:
 			push rdi
 			push rsi
-			mov rdi, [[end_node] + t_list.data]
+			mov rdi, [end_node] + t_list.data
+			mov rdi, [rdi]
+			; mov rdi, [[end_node] + t_list.data]
 			mov rsi, [pivot]
 			call cmp_function ; ret = cmp_function(end_node->data, pivot)
 			pop rsi
