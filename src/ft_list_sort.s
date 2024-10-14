@@ -4,6 +4,7 @@ global ft_list_sort
 
 extern ft_list_size
 extern ft_list_swap
+extern ft_list_at
 
 section .text
 
@@ -108,7 +109,10 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 	get_pivot_node:
 		mov r9, r8
 		call get_node ; ret = get_node(begin_list, pivot_index)
-		mov [pivot], [rax + t_list.data] ; pivot = ret->data
+		push r10
+		mov r10, [rax + t_list.data]
+		mov [pivot], r10 ; pivot = ret->data
+		pop r10
 
 	mov [cmp_function], rsi ; cmp_function = cmp
 	mov [init_iter], rdx ; init_iter = init
@@ -121,7 +125,8 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 		loop_1_start:
 			push rdi
 			push rsi
-			mov rdi, [init_node] + t_list.data
+			mov rdi, [init_node]
+			add rdi, t_list.data
 			mov rdi, [rdi]
 			; mov rdi, [[init_node] + t_list.data]
 			mov rsi, [pivot]
@@ -134,8 +139,10 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 			jg loop_1_end
 			inc byte [init_iter] ; init_iter++		
 			push rdi
-			mov rdi, [init_node] + t_list.next
-			mov [init_node], [rdi]
+			mov rdi, [init_node]
+			add rdi, t_list.next
+			mov rdi, [rdi]
+			mov [init_node], rdi
 			; mov [init_node], [[init_node] + t_list.next] ; init_node = init_node->next		
 			pop rdi
 			jmp loop_1_start
@@ -145,7 +152,8 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 		loop_2_start:
 			push rdi
 			push rsi
-			mov rdi, [end_node] + t_list.data
+			mov rdi, [end_node]
+			add rdi, t_list.data
 			mov rdi, [rdi]
 			; mov rdi, [[end_node] + t_list.data]
 			mov rsi, [pivot]
@@ -225,6 +233,8 @@ finish_function:
 	ret ; return ret
 
 section .bss
+	init_iter		resq 1
+	end_iter		resq 1
 	init_node		resq 1
 	end_node		resq 1
 	pivot			resq 1
