@@ -957,7 +957,7 @@ void	__test_list_sort_time(
 
 void	test_list_sort(void)
 {
-	void			*strs[] = {"", "1", "sd", "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
+	void			*strs[] = {"2", "1", "0", "8", "4", "9", "7", "3", "5"};
 	int				strs_len = sizeof(strs) / sizeof(*strs);
 	t_list			*begin_list = NULL;
 

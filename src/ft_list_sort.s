@@ -8,6 +8,21 @@ extern ft_list_at
 
 section .text
 
+%macro instruction_double_dereference 3-6 ; %1(instruction), %2(first_op), %3(second_op), %4(first_dereferenced_size), %5(second_dereferenced_size), %6(mov_specifier)
+	push r10
+	mov%6 r10, %5 [%3]
+	%1 %4 [%2], r10
+	pop r10
+%endmacro
+
+%macro cmp_dereferenced 2-4 ; %1(first), %2(second), %3(first_dereferenced_size), %4(second_dereferenced_size)
+	instruction_double_dereference cmp, %1, %2, %3, %4
+%endmacro
+
+%macro mov_dereferenced 2-4 ; %1(first), %2(second), %3(first_dereferenced_size), %4(second_dereferenced_size)
+	instruction_double_dereference mov, %1, %2, %3, %4
+%endmacro
+
 ft_list_sort: ; rdi(begin_list), rsi(cmp)
 
 	null_check:
@@ -109,17 +124,23 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 	get_pivot_node:
 		mov r9, r8
 		call get_node ; ret = get_node(begin_list, pivot_index)
-		push r10
-		mov r10, [rax + t_list.data]
-		mov [pivot], r10 ; pivot = ret->data
-		pop r10
+		mov_dereferenced pivot, rax + t_list.data
+		; push r10
+		; mov r10, [rax + t_list.data]
+		; mov [pivot], r10 ; pivot = ret->data
+		; pop r10
 
 	mov [cmp_function], rsi ; cmp_function = cmp
 	mov [init_iter], rdx ; init_iter = init
 	mov [end_iter], rcx ; end_iter = end
 		
 	loop_start:
-		cmp [init_iter], [end_iter] ; init >= end
+
+		; push r10
+		; mov r10, [end_iter]
+		; cmp [init_iter], r10 ; init >= end
+		; pop  r10
+		cmp_dereferenced init_iter, end_iter, qword, qword ; init >= end
 		jge loop_end
 
 		loop_1_start:
@@ -173,27 +194,30 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 			
 		loop_2_end:
 
-		cmp [init_iter], [end_iter] ; i >= j
-		jge loop_end
+			push r10
+			mov r10, [end_iter]
+			cmp [init_iter], r10 ; i >= j
+			pop r10
+			jge loop_end
 
-		push rdi
-		push rsi
-		push r8
-		call ft_list_swap ; ft_list_swap(init_node, end_node)
-		pop r8
-		pop rsi
-		pop rdi
+			push rdi
+			push rsi
+			push r8
+			call ft_list_swap ; ft_list_swap(init_node, end_node)
+			pop r8
+			pop rsi
+			pop rdi
 
 		pivot_moved_check:
 
 			init_iter_check:
-				cmp r8, word [init_iter]
+				cmp r8, qword [init_iter]
 				jne end_iter_check
 				movsx r8, word [init_iter]
 				jmp pivot_moved_check_end
 
 			end_iter_check:
-				cmp r8, word [end_iter]
+				cmp r8, qword [end_iter]
 				jne pivot_moved_check_end
 				movsx r8, word [end_iter]
 
@@ -209,7 +233,7 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 		pop r8
 		pop rsi
 		pop rdi
-		movzx rax, [end_iter]
+		mov rax, [end_iter]
 
 	ret ; return ret
 	
