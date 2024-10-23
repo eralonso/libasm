@@ -5,23 +5,62 @@ global ft_list_sort
 extern ft_list_size
 extern ft_list_swap
 extern ft_list_at
+extern exit
 
 section .text
 
-%macro instruction_double_dereference 3-6 ; %1(instruction), %2(first_op), %3(second_op), %4(first_dereferenced_size), %5(second_dereferenced_size), %6(mov_specifier)
+; Registers preserved across function calls: rbx, rsp, rbp, r12-r15
+
+; GENERAL PURPOSE MACROS
+
+%macro	instruction_double_dereference 3-6 ; %1(instruction), %2(first_op), %3(second_op), %4(first_dereferenced_size), %5(second_dereferenced_size), %6(mov_specifier)
 	push r10
 	mov%6 r10, %5 [%3]
 	%1 %4 [%2], r10
 	pop r10
 %endmacro
 
-%macro cmp_dereferenced 2-4 ; %1(first), %2(second), %3(first_dereferenced_size), %4(second_dereferenced_size)
+%macro	cmp_dereferenced 2-4 ; %1(first), %2(second), %3(first_dereferenced_size), %4(second_dereferenced_size)
 	instruction_double_dereference cmp, %1, %2, %3, %4
 %endmacro
 
-%macro mov_dereferenced 2-4 ; %1(first), %2(second), %3(first_dereferenced_size), %4(second_dereferenced_size)
+%macro	mov_dereferenced 2-4 ; %1(first), %2(second), %3(first_dereferenced_size), %4(second_dereferenced_size)
 	instruction_double_dereference mov, %1, %2, %3, %4
 %endmacro
+
+%macro	save_param_registers_4 0
+	push rcx
+	push rdx
+	push rsi
+	push rdi
+%endmacro
+
+%macro	recover_param_registers_4 0
+	pop rdi
+	pop rsi
+	pop rdx
+	pop rcx
+%endmacro
+
+%macro	save_param_registers_6 0
+	push r9
+	push r8
+	push rcx
+	push rdx
+	push rsi
+	push rdi
+%endmacro
+
+%macro	recover_param_registers_6 0
+	pop rdi
+	pop rsi
+	pop rdx
+	pop rcx
+	pop r8
+	pop r9
+%endmacro
+
+;
 
 ft_list_sort: ; rdi(begin_list), rsi(cmp)
 
@@ -57,53 +96,59 @@ quicksort_loop: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end)
 	sorted_check:
 		cmp rdx, rcx ; init >= end
 		jge finish_function
-	
+
 	sorting:
 
 		obtain_pivot:
 			call get_optimal_pivot ; ret = get_optimal_pivot(begin_list, cmp, init, end)
 
 		make_partition:
-			push rdi
-			push rsi
-			push rdx
-			push rcx
+			; push rcx
+			; push rdx
+			; push rsi
+			; push rdi
+			save_param_registers_4
 			mov r8, rax
 			call quicksort_partition ; ret = quicksort_partition(begin_list, cmp, init, end, pivot_index)
-			pop rcx
-			pop rdx
-			pop rsi
-			pop rdi
+			recover_param_registers_4
+			; pop rdi
+			; pop rsi
+			; pop rdx
+			; pop rcx
 
 		sort_first_partition:
-			push rdi
-			push rsi
-			push rdx
-			push rcx
 			push rax
+			; push rcx
+			; push rdx
+			; push rsi
+			; push rdi
+			save_param_registers_4
 			mov rcx, rax
 			dec rcx
 			call quicksort_loop ; quicksort_loop(begin_list, cmp, init, pivot_index - 1)
+			recover_param_registers_4
+			; pop rdi
+			; pop rsi
+			; pop rdx
+			; pop rcx
 			pop rax
-			pop rcx
-			pop rdx
-			pop rsi
-			pop rdi
 
 		sort_second_partition:
-			push rdi
-			push rsi
-			push rdx
-			push rcx
-			push rax
+			; push rax ; <- I think this is unnecessary
+			; push rcx
+			; push rdx
+			; push rsi
+			; push rdi
+			save_param_registers_4
 			mov rdx, rax
 			inc rdx
 			call quicksort_loop ; quicksort_loop(begin_list, cmp, pivot_index + 1, end)
-			pop rax
-			pop rcx
-			pop rdx
-			pop rsi
-			pop rdi
+			recover_param_registers_4
+			; pop rdi
+			; pop rsi
+			; pop rdx
+			; pop rcx
+			; pop rax
 
 get_optimal_pivot: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end)
 	mov rax, rdx ; ret = init
@@ -144,16 +189,18 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 		jge loop_end
 
 		loop_1_start:
-			push rdi
-			push rsi
+			; push rsi
+			; push rdi
+			save_param_registers_6
 			mov rdi, [init_node]
 			add rdi, t_list.data
 			mov rdi, [rdi]
 			; mov rdi, [[init_node] + t_list.data]
 			mov rsi, [pivot]
-			call cmp_function ; ret = cmp_function(init_node->data, pivot)
-			pop rsi
-			pop rdi
+			call [cmp_function] ; ret = cmp_function(init_node->data, pivot)
+			recover_param_registers_6
+			; pop rdi
+			; pop rsi
 			cmp rax, 0
 			jg loop_1_end
 			cmp [init_iter], rcx ; init_iter >= end
@@ -171,21 +218,24 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 		loop_1_end:
 
 		loop_2_start:
-			push rdi
-			push rsi
+			; push rdi
+			; push rsi
+			save_param_registers_6
 			mov rdi, [end_node]
 			add rdi, t_list.data
 			mov rdi, [rdi]
 			; mov rdi, [[end_node] + t_list.data]
 			mov rsi, [pivot]
-			call cmp_function ; ret = cmp_function(end_node->data, pivot)
-			pop rsi
-			pop rdi
+			call [cmp_function] ; ret = cmp_function(end_node->data, pivot)
+			recover_param_registers_6
+			; pop rsi
+			; pop rdi
 			cmp rax, 0
 			jle loop_2_end
 			cmp [end_iter], rcx ; end_iter >= end
 			jg loop_2_end
 			dec byte [end_iter] ; end_iter--
+
 			get_prev_node:
 				mov r9, [end_iter]
 				call get_node ; ret = get_node(begin_list, end_iter)
@@ -194,15 +244,18 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 			
 		loop_2_end:
 
-			push r10
-			mov r10, [end_iter]
-			cmp [init_iter], r10 ; i >= j
-			pop r10
+			; push r10
+			; mov r10, [end_iter]
+			; cmp [init_iter], r10 ; i >= j
+			; pop r10
+			cmp_dereferenced init_iter, end_iter, qword, qword
 			jge loop_end
 
 			push rdi
 			push rsi
 			push r8
+			mov rdi, [init_node]
+			mov rsi, [end_node]
 			call ft_list_swap ; ft_list_swap(init_node, end_node)
 			pop r8
 			pop rsi
@@ -222,6 +275,9 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 				movsx r8, word [end_iter]
 
 		pivot_moved_check_end:
+	
+		; mov rdi, 0
+		; call exit
 
 		jmp loop_start
 
@@ -229,6 +285,11 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 		push rdi
 		push rsi
 		push r8
+		; mov rdi, ; Get node in pivot_index position
+		mov r9, r8 
+		call get_node
+		mov rdi, rax
+		mov rsi, [end_node]
 		call ft_list_swap
 		pop r8
 		pop rsi
@@ -238,19 +299,21 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 	ret ; return ret
 	
 	get_node: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_index), r9(nbr)
-		push rdi
-		push rsi
-		push rdx
-		push rcx
-		push r8
+		; push r8
+		; push rcx
+		; push rdx
+		; push rsi
+		; push rdi
+		save_param_registers_6
 		mov rdi, qword [rdi] ; begin_list = *begin_list
 		mov rsi, r9
 		call ft_list_at ; ret = ft_list_at(begin_list, nbr)
-		pop r8
-		pop rcx
-		pop rdx
-		pop rsi
-		pop rdi
+		recover_param_registers_6
+		; pop rdi
+		; pop rsi
+		; pop rdx
+		; pop rcx
+		; pop r8
 		ret ; return ret
 
 finish_function:
