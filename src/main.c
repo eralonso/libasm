@@ -10,14 +10,15 @@
 //TODO: #include "libasm.h"
 
 //START: ATOI_BASE_MAIN
+
 typedef int	(*t_char_cmp)(int);
 
 typedef t_char_cmp	t_char_checker;
 typedef int	(*t_str_checker)(const char *);
 typedef int	(*t_atoi_base_test)(void);
+
 //END: ATOI_BASE_MAIN
-//
-//
+
 typedef int (*t_list_data_cmp)(const char *, const char *);
 
 //typedef int (*t_char_cmp)(int);
@@ -28,7 +29,7 @@ typedef struct s_linked_list	t_linked_list;
 typedef union	u_entry_function
 {
 	size_t	(*strlen)(char *str);
-} t_entry_function;
+}	t_entry_function;
 
 struct	s_entry
 {
@@ -39,7 +40,7 @@ struct	s_entry
 typedef union	u_linked_list_types
 {
 	t_entry	*entry;
-} t_linked_list_types;
+}	t_linked_list_types;
 
 struct	s_linked_list
 {
@@ -48,6 +49,7 @@ struct	s_linked_list
 };
 
 //BONUS
+
 typedef struct s_list t_list;
 
 struct s_list
@@ -55,6 +57,7 @@ struct s_list
 	void	*data;
 	t_list	*next;
 };
+
 //
 
 size_t	ft_strlen(const char *str);

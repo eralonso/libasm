@@ -103,52 +103,26 @@ quicksort_loop: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end)
 			call get_optimal_pivot ; ret = get_optimal_pivot(begin_list, cmp, init, end)
 
 		make_partition:
-			; push rcx
-			; push rdx
-			; push rsi
-			; push rdi
 			save_param_registers_4
 			mov r8, rax
 			call quicksort_partition ; ret = quicksort_partition(begin_list, cmp, init, end, pivot_index)
 			recover_param_registers_4
-			; pop rdi
-			; pop rsi
-			; pop rdx
-			; pop rcx
 
 		sort_first_partition:
 			push rax
-			; push rcx
-			; push rdx
-			; push rsi
-			; push rdi
 			save_param_registers_4
 			mov rcx, rax
 			dec rcx
 			call quicksort_loop ; quicksort_loop(begin_list, cmp, init, pivot_index - 1)
 			recover_param_registers_4
-			; pop rdi
-			; pop rsi
-			; pop rdx
-			; pop rcx
 			pop rax
 
 		sort_second_partition:
-			; push rax ; <- I think this is unnecessary
-			; push rcx
-			; push rdx
-			; push rsi
-			; push rdi
 			save_param_registers_4
 			mov rdx, rax
 			inc rdx
 			call quicksort_loop ; quicksort_loop(begin_list, cmp, pivot_index + 1, end)
 			recover_param_registers_4
-			; pop rdi
-			; pop rsi
-			; pop rdx
-			; pop rcx
-			; pop rax
 
 get_optimal_pivot: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end)
 	mov rax, rdx ; ret = init
@@ -170,109 +144,105 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 		mov r9, r8
 		call get_node ; ret = get_node(begin_list, pivot_index)
 		mov_dereferenced pivot, rax + t_list.data
-		; push r10
-		; mov r10, [rax + t_list.data]
-		; mov [pivot], r10 ; pivot = ret->data
-		; pop r10
 
-	mov [cmp_function], rsi ; cmp_function = cmp
-	mov [init_iter], rdx ; init_iter = init
-	mov [end_iter], rcx ; end_iter = end
+	init_bss_variables:
+		mov [cmp_function], rsi ; cmp_function = cmp
+		mov [init_iter], rdx ; init_iter = init
+		mov [end_iter], rcx ; end_iter = end
 		
 	loop_start:
 
-		; push r10
-		; mov r10, [end_iter]
-		; cmp [init_iter], r10 ; init >= end
-		; pop  r10
-		cmp_dereferenced init_iter, end_iter, qword, qword ; init >= end
-		jge loop_end
+		check_overiter:
+			cmp_dereferenced init_iter, end_iter, qword, qword ; init >= end
+			jge loop_end
 
 		loop_1_start:
-			; push rsi
-			; push rdi
-			save_param_registers_6
-			mov rdi, [init_node]
-			add rdi, t_list.data
-			mov rdi, [rdi]
-			; mov rdi, [[init_node] + t_list.data]
-			mov rsi, [pivot]
-			call [cmp_function] ; ret = cmp_function(init_node->data, pivot)
-			recover_param_registers_6
-			; pop rdi
-			; pop rsi
-			cmp rax, 0
-			jg loop_1_end
-			cmp [init_iter], rcx ; init_iter >= end
-			jg loop_1_end
-			inc byte [init_iter] ; init_iter++		
-			push rdi
-			mov rdi, [init_node]
-			add rdi, t_list.next
-			mov rdi, [rdi]
-			mov [init_node], rdi
-			; mov [init_node], [[init_node] + t_list.next] ; init_node = init_node->next		
-			pop rdi
+
+			cmp_init_node_value:
+				save_param_registers_6
+				mov rsi, [init_node]
+				; add rdi, t_list.data
+				mov rsi, [rsi + t_list.data]
+				; mov rdi, [[init_node] + t_list.data]
+				mov rdi, [pivot]
+				call [cmp_function] ; ret = cmp_function(init_node->data, pivot)
+				recover_param_registers_6
+				cmp rax, 0
+				jg loop_1_end
+
+			check_init_iter:
+				cmp [init_iter], rcx ; init_iter >= end
+				jge loop_1_end
+
+			iter_init_iter:
+				inc byte [init_iter] ; init_iter++		
+
+			iter_init_node:
+				push rdi
+				mov rdi, [init_node]
+				; add rdi, t_list.next
+				mov rdi, [rdi + t_list.next]
+				mov [init_node], rdi
+				; mov [init_node], [[init_node] + t_list.next] ; init_node = init_node->next		
+				pop rdi
+
 			jmp loop_1_start
 
 		loop_1_end:
 
 		loop_2_start:
-			; push rdi
-			; push rsi
-			save_param_registers_6
-			mov rdi, [end_node]
-			add rdi, t_list.data
-			mov rdi, [rdi]
-			; mov rdi, [[end_node] + t_list.data]
-			mov rsi, [pivot]
-			call [cmp_function] ; ret = cmp_function(end_node->data, pivot)
-			recover_param_registers_6
-			; pop rsi
-			; pop rdi
-			cmp rax, 0
-			jle loop_2_end
-			cmp [end_iter], rcx ; end_iter >= end
-			jg loop_2_end
-			dec byte [end_iter] ; end_iter--
+
+			cmp_end_node_value:
+				save_param_registers_6
+				mov rsi, [end_node]
+				; add rdi, t_list.data
+				mov rsi, [rsi + t_list.data]
+				; mov rdi, [[end_node] + t_list.data]
+				mov rdi, [pivot]
+				call [cmp_function] ; ret = cmp_function(end_node->data, pivot)
+				recover_param_registers_6
+				cmp rax, 0
+				jle loop_2_end
+
+			check_end_iter:
+				cmp [end_iter], rcx ; end_iter >= end
+				jg loop_2_end
+
+			iter_end_iter:
+				dec byte [end_iter] ; end_iter--
 
 			get_prev_node:
 				mov r9, [end_iter]
 				call get_node ; ret = get_node(begin_list, end_iter)
-				mov [end_iter], rax
+				mov [end_node], rax
+
 			jmp loop_2_start
 			
 		loop_2_end:
 
-			; push r10
-			; mov r10, [end_iter]
-			; cmp [init_iter], r10 ; i >= j
-			; pop r10
-			cmp_dereferenced init_iter, end_iter, qword, qword
-			jge loop_end
+			check_overiter_2:
+				cmp_dereferenced init_iter, end_iter, qword, qword
+				jge loop_end
 
-			push rdi
-			push rsi
-			push r8
-			mov rdi, [init_node]
-			mov rsi, [end_node]
-			call ft_list_swap ; ft_list_swap(init_node, end_node)
-			pop r8
-			pop rsi
-			pop rdi
+			swap_content:
+				save_param_registers_6
+				mov rdi, [init_node]
+				mov rsi, [end_node]
+				call ft_list_swap ; ft_list_swap(init_node, end_node)
+				recover_param_registers_6
 
 		pivot_moved_check:
 
 			init_iter_check:
-				cmp r8, qword [init_iter]
+				cmp r8, qword [init_iter] ; pivot_index != init_iter
 				jne end_iter_check
-				movsx r8, word [init_iter]
+				mov r8, [init_iter] ; pivot_index = init_iter
 				jmp pivot_moved_check_end
 
 			end_iter_check:
-				cmp r8, qword [end_iter]
+				cmp r8, qword [end_iter] ; pivot_index != end_iter
 				jne pivot_moved_check_end
-				movsx r8, word [end_iter]
+				mov r8, [end_iter] ; pivot_index = end_iter
 
 		pivot_moved_check_end:
 	
@@ -282,38 +252,28 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 		jmp loop_start
 
 	loop_end:
-		push rdi
-		push rsi
-		push r8
-		; mov rdi, ; Get node in pivot_index position
-		mov r9, r8 
-		call get_node
-		mov rdi, rax
-		mov rsi, [end_node]
-		call ft_list_swap
-		pop r8
-		pop rsi
-		pop rdi
-		mov rax, [end_iter]
+
+		last_content_swap:
+			save_param_registers_6
+
+			get_pivot_index_node:
+				mov r9, r8 
+				call get_node
+				mov rdi, rax
+
+			mov rsi, [end_node]
+			call ft_list_swap
+			recover_param_registers_6
+			mov rax, [end_iter]
 
 	ret ; return ret
 	
 	get_node: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_index), r9(nbr)
-		; push r8
-		; push rcx
-		; push rdx
-		; push rsi
-		; push rdi
 		save_param_registers_6
 		mov rdi, qword [rdi] ; begin_list = *begin_list
 		mov rsi, r9
 		call ft_list_at ; ret = ft_list_at(begin_list, nbr)
 		recover_param_registers_6
-		; pop rdi
-		; pop rsi
-		; pop rdx
-		; pop rcx
-		; pop r8
 		ret ; return ret
 
 finish_function:
