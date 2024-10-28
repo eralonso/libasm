@@ -906,17 +906,17 @@ void	__test_list_swap_time(
 	unsigned long	end;
 
 	if (node1)
-		printf("node1->data: %p ", node1->data);
+		printf("node1->data: %p (char *) = %s\n", node1->data, (char *)node1->data);
 	if (node2)
-		printf("node2->data: %p", node2->data);
+		printf("node2->data: %p (char *) = %s\n", node2->data, (char *)node2->data);
 	start = get_time();
 	list_swap_pointer(node1, node2);
 	end = get_time();
 	printf("\n%s(%p, %p) in %lu microseconds\n", name, node1, node2, end - start);
 	if (node1)
-		printf("node1->data: %p ", node1->data);
+		printf("node1->data: %p (char *) = %s\n", node1->data, (char *)node1->data);
 	if (node2)
-		printf("node2->data: %p", node2->data);
+		printf("node2->data: %p (char *) = %s\n", node2->data, (char *)node2->data);
 	printf("\n");
 }
 
@@ -960,7 +960,9 @@ void	__test_list_sort_time(
 
 void	test_list_sort(void)
 {
-	void			*strs[] = {"2", "1", "0", "8", "4", "9", "7", "3", "5"};
+	// void			*strs[] = {"2", "1", "0", "8", "4", "9", "7", "3", "5"};
+	// void			*strs[] = {"8", "7", "6", "5", "4", "3", "2", "0", "1"};
+	void			*strs[] = {"2", "0", "1"};
 	int				strs_len = sizeof(strs) / sizeof(*strs);
 	t_list			*begin_list = NULL;
 
@@ -974,6 +976,20 @@ void	test_list_sort(void)
 	}
 	clear_list(begin_list);
 }
+
+//0100 0000 == 64
+//1100 0000 == 64
+//1011 1111 == -64
+
+//0000
+//0111 = 7
+//1000 = -8
+//1001 = -7
+//1010 = -6	
+//1011 = -5
+//1100 = -4
+//1101 = -3
+//1110 = -2
 
 int	main(void)
 {

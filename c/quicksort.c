@@ -87,6 +87,15 @@ int	qs__get_optimal_pivot(int *arr, int init, int end)
 	return (pivot_index);
 }
 
+int	qs__update_pivot_index(int pivot_index, int i, int j)
+{
+	if (i == pivot_index)
+		return (j);
+	else if (j == pivot_index)
+		return (i);
+	return (pivot_index);
+}
+
 int	qs__set_rigth_place_pivot(int *arr, int init, int end, int pivot_index)
 {
 	int	i;
@@ -105,10 +114,7 @@ int	qs__set_rigth_place_pivot(int *arr, int init, int end, int pivot_index)
 		if (i >= j)
 			break ;
 		int_swap(arr + i, arr + j);
-		if (i == pivot_index)
-			pivot_index = j;
-		else if (j == pivot_index)
-			pivot_index = i;
+		pivot_index = qs__update_pivot_index(pivot_index, i, j);
 	}
 	int_swap(arr + pivot_index, arr + j);
 	return (j);
@@ -190,12 +196,13 @@ void	quicksort(int *arr)
 
 void	test_quicksort(void)
 {
-	int		n[5][100] = {
+	int		n[6][100] = {
 		{9, 1, 8, 2, -4, int_end},
 		{0, 1, int_end},
 		{-1, -1, int_end},
 		{1, 34, 6, 76, 23, -1, -2147483647, 2147483647, 34, 1, 43, int_end},
-		{1234, 12345, 12, 123456, 234, 456, -123, 123453, -1234, int_end}
+		{1234, 12345, 12, 123456, 234, 456, -123, 123453, -1234, int_end},
+		{1, 0, 2, 1, 1, 0, 1, 0, int_end}
 	};
 	int		n_arr_amount = sizeof(n) / sizeof(*n);
 	short	is_sorted;

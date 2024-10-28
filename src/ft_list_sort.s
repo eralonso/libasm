@@ -143,7 +143,7 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 	get_pivot_node:
 		mov r9, r8
 		call get_node ; ret = get_node(begin_list, pivot_index)
-		mov_dereferenced pivot, rax + t_list.data
+		mov_dereferenced pivot, rax + t_list.data, qword, qword
 
 	init_bss_variables:
 		mov [cmp_function], rsi ; cmp_function = cmp
@@ -160,14 +160,14 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 
 			cmp_init_node_value:
 				save_param_registers_6
-				mov rsi, [init_node]
+				mov rdi, [init_node]
 				; add rdi, t_list.data
-				mov rsi, [rsi + t_list.data]
+				mov rdi, [rdi + t_list.data]
 				; mov rdi, [[init_node] + t_list.data]
-				mov rdi, [pivot]
+				mov rsi, [pivot]
 				call [cmp_function] ; ret = cmp_function(init_node->data, pivot)
 				recover_param_registers_6
-				cmp rax, 0
+				cmp eax, 0
 				jg loop_1_end
 
 			check_init_iter:
@@ -194,19 +194,19 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 
 			cmp_end_node_value:
 				save_param_registers_6
-				mov rsi, [end_node]
+				mov rdi, [end_node]
 				; add rdi, t_list.data
-				mov rsi, [rsi + t_list.data]
+				mov rdi, [rdi + t_list.data]
 				; mov rdi, [[end_node] + t_list.data]
-				mov rdi, [pivot]
+				mov rsi, [pivot]
 				call [cmp_function] ; ret = cmp_function(end_node->data, pivot)
 				recover_param_registers_6
-				cmp rax, 0
+				cmp eax, 0
 				jle loop_2_end
 
 			check_end_iter:
-				cmp [end_iter], rcx ; end_iter >= end
-				jg loop_2_end
+				cmp [end_iter], rdx ; end_iter <= init
+				jle loop_2_end
 
 			iter_end_iter:
 				dec byte [end_iter] ; end_iter--
@@ -236,13 +236,13 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 			init_iter_check:
 				cmp r8, qword [init_iter] ; pivot_index != init_iter
 				jne end_iter_check
-				mov r8, [init_iter] ; pivot_index = init_iter
+				mov r8, [end_iter] ; pivot_index = init_iter
 				jmp pivot_moved_check_end
 
 			end_iter_check:
 				cmp r8, qword [end_iter] ; pivot_index != end_iter
 				jne pivot_moved_check_end
-				mov r8, [end_iter] ; pivot_index = end_iter
+				mov r8, [init_iter] ; pivot_index = end_iter
 
 		pivot_moved_check_end:
 	
@@ -257,7 +257,7 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 			save_param_registers_6
 
 			get_pivot_index_node:
-				mov r9, r8 
+				mov r9, r8
 				call get_node
 				mov rdi, rax
 
