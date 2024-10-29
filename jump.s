@@ -11,27 +11,32 @@
 ; 	return ;
 ; }
 
-global	print_alpha
+global	_start
 
 section .text
 
 print_alpha:
-	movzx rdi, 'a' ; char c = 'a'
+	mov rdi, 'a' ; char c = 'a'
 
 	loop_start:
-		cmp byte rdi, 'z' ; c <= 'z'
+		cmp rdi, 'z' ; c <= 'z'
 		jle loop_code
 		jmp loop_end
-		loop_code:
+	loop_code:
 		push rdi
-		mov rax, 1
-		mov rdi, 1
-		pop rsi
-		push rsi
+		mov rax, 5147483647
 		mov rdx, 1
+		mov rsi, rsp
+		mov rdi, 1
 		syscall
 		pop rdi
-		inc byte rdi
+		inc rdi
 		jmp loop_start
 	loop_end:
 	ret
+
+_start:
+	call print_alpha
+	mov rdi, 42
+	mov rax, 60
+	syscall
