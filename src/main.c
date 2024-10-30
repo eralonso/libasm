@@ -85,6 +85,7 @@ void	ft_list_push_front(t_list **begin_list, void *data);
 int		ft_list_size(t_list *begin_list);
 void	ft_list_swap(t_list *node1, t_list *node2);
 t_list	*ft_list_at(t_list *begin_list, unsigned int nbr);
+t_list	*ft_list_prev(t_list *begin_list, t_list *node);
 void	ft_list_sort(t_list **begin_list, t_list_data_cmp cmp);
 void	ft_list_remove_if(t_list **begin_list, void *data_ref, t_list_data_cmp cmp, void (*free_fct)(void *));
 //
@@ -775,7 +776,7 @@ void	print_list(t_list *begin)
 	index = 0;
 	while (begin != 0)
 	{
-		printf("%u node: %p, node->data: %p", index, begin, begin->data);
+		printf("%u node: %p, node->data: %s", index, begin, (char *)begin->data);
 		begin = begin->next;
 		if (begin)
 			printf(" | ");
@@ -940,6 +941,41 @@ void	test_list_swap(void)
 	clear_list(begin_list);
 }
 
+void	__test_list_prev_time(
+		t_list *(*list_prev_pointer)(t_list *, t_list *), char *name, t_list *begin_list, t_list *node)
+{
+	unsigned long	start;
+	unsigned long	end;
+	t_list			*ret;
+
+	print_list(begin_list);
+	printf("node: %p data: %s\n", node, node ? (char *)node->data : NULL);
+	start = get_time();
+	ret = list_prev_pointer(begin_list, node);
+	end = get_time();
+	printf("\n%s(%p, %p) == %p && ret->data = %s in %lu microseconds\n",
+			name, begin_list, node, ret, ret ? (char *)ret->data : NULL, end - start);
+	printf("\n");
+}
+
+void	test_list_prev(void)
+{
+	void			*strs[] = {"", "1", NULL, "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
+	unsigned int	position[] = {0, -1, 2, 9, 12, 3, 5, 4, 9};
+	int				strs_len = sizeof(strs) / sizeof(*strs);
+	t_list			*begin_list = NULL;
+
+	for (int i = 0; i < strs_len; i++)
+		ft_list_push_front(&begin_list, strs[i]);
+	printf("TEST: LIST_PREV\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_list_prev_time(ft_list_prev, "\tft_list_prev", begin_list, ft_list_at(begin_list, position[i]));
+	}
+	clear_list(begin_list);
+}
+
 void	__test_list_sort_time(
 		void (*list_sort_pointer)(t_list **, t_list_data_cmp),
 		char *name, t_list **begin_list, t_list_data_cmp cmp)
@@ -977,20 +1013,6 @@ void	test_list_sort(void)
 	clear_list(begin_list);
 }
 
-//0100 0000 == 64
-//1100 0000 == 64
-//1011 1111 == -64
-
-//0000
-//0111 = 7
-//1000 = -8
-//1001 = -7
-//1010 = -6	
-//1011 = -5
-//1100 = -4
-//1101 = -3
-//1110 = -2
-
 int	main(void)
 {
 	void	(*tests[])(void) = {
@@ -1003,7 +1025,7 @@ int	main(void)
 		test_has_char_duplicated, test_str_has_min_size,
 		test_is_valid_base, atoi_base_main, test_create_elem,
 		test_list_push_front, test_list_size, test_list_at,
-		test_list_swap, test_list_sort
+		test_list_swap, test_list_sort, test_list_prev
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 

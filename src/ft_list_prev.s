@@ -1,3 +1,5 @@
+%include "t_list.mac"
+
 global ft_list_prev
 
 %macro if 4
@@ -5,15 +7,35 @@ global ft_list_prev
 	%3 %4
 %endmacro
 
+; %macro if_else 5-*
+; 	cmp %1, %2
+; 	%3 %4
+; %endmacro
+
+%macro iter_list_node 1
+	mov %1, [%1 + t_list.next] ; param = param->next
+%endmacro
+
 section .text
 
 ft_list_prev: ; rdi(t_list *begin_list), rsi(t_list *node)
 
-	null_check:
-		if rdi, 0, je, finish_function
-		if rsi, 0, je, finish_function
+	init_return:
+		xor rax, rax ; ret = 0
 
-	xor rax, rax
+	null_check:
+		if rdi, 0, je, finish_function ; if (begin_list == 0) return ret
+		if rsi, 0, je, finish_function ; if (node == 0) return ret
+
+	check_is_first:
+		if rdi, rsi, je, finish_function ; if (node == 0) return ret
+
+	mov rax, rdi ; ret = begin_list
+	loop_start:
+		if rax, 0, je, finish_function
+		if [rax + t_list.next], rsi, je, finish_function
+		iter_list_node rax
+		jmp loop_start
 
 finish_function:
 	ret ; return ret
