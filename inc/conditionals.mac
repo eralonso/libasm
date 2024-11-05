@@ -1,0 +1,9 @@
+%ifndef CONDITIONALS_MAC
+	%define CONDITIONALS_MAC
+
+	%macro if 4
+		cmp %1, %2
+		%3 %4
+	%endmacro
+
+%endif

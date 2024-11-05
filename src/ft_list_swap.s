@@ -1,22 +1,16 @@
-%include "t_list.mac"
-
 global ft_list_swap
+
+%include "t_list.mac"
+%include "conditionals.mac"
 
 section .text
 
-ft_list_swap: ; rdi(node1), rsi(node2)
-	
-	null_check:
-		test rdi, rdi ; node1 == 0
-		jz finsih_function
-		test rsi, rsi ; node2 == 0
-		jz finsih_function
-	
-	swap_data:
-		mov rcx, qword [rdi + t_list.data] ; tmp = node1->data
-		mov r8, qword [rsi + t_list.data] ; tmp2 = node2->data
-		mov [rdi + t_list.data], r8 ; node1->data = tmp2
-		mov [rsi + t_list.data], rcx ; node2->data = tmp
+ft_list_swap:
 
-finsih_function:
-	ret ; return
+	null_check:
+		if rdi, 0, je, finish_function
+		if rsi, 0, je, finish_function
+		if rdx, 0, je, finish_function
+
+finish_function:
+	ret

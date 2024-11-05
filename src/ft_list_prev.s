@@ -1,20 +1,12 @@
 %include "t_list.mac"
+%include "conditionals.mac"
 
 global ft_list_prev
-
-%macro if 4
-	cmp %1, %2
-	%3 %4
-%endmacro
 
 ; %macro if_else 5-*
 ; 	cmp %1, %2
 ; 	%3 %4
 ; %endmacro
-
-%macro iter_list_node 1
-	mov %1, [%1 + t_list.next] ; param = param->next
-%endmacro
 
 section .text
 

@@ -6,7 +6,7 @@
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/02 18:06:40 by eralonso          #+#    #+#              #
-#    Updated: 2024/10/30 15:15:15 by eralonso         ###   ########.fr        #
+#    Updated: 2024/11/05 15:27:22 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -52,8 +52,8 @@ FILES := ft_strlen ft_strcpy ft_strcmp ft_write ft_read \
 		 ft_strchri is_sign_symbol convert_sign_str_n_to_number \
 		 ft_isspace str_n_find_first_not_of str_find_first_not_of \
 		 has_char_duplicated str_has_min_size is_valid_base ft_atoi_base \
-		 ft_create_elem ft_list_push_front ft_list_size ft_list_swap \
-		 ft_list_at ft_list_sort exit ft_list_prev
+		 ft_create_elem ft_list_push_front ft_list_size ft_list_swap_data \
+		 ft_list_at ft_list_sort exit ft_list_prev ft_list_swap
 
 TESTS_FILES := main
 

@@ -226,9 +226,9 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 
 			swap_content:
 				save_param_registers_6
-				mov rdi, [init_node]
-				mov rsi, [end_node]
-				call ft_list_swap ; ft_list_swap(init_node, end_node)
+				mov rsi, [init_node]
+				mov rdx, [end_node]
+				call ft_list_swap ; ft_list_swap(begin_list, init_node, end_node)
 				recover_param_registers_6
 
 		pivot_moved_check:
@@ -259,9 +259,9 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 			get_pivot_index_node:
 				mov r9, r8
 				call get_node
-				mov rdi, rax
+				mov rsi, rax
 
-			mov rsi, [end_node]
+			mov rdx, [end_node]
 			call ft_list_swap
 			recover_param_registers_6
 			mov rax, [end_iter]

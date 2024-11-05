@@ -1,7 +1,13 @@
-%ifndef T_LIST
-	%define T_LIST
+%ifndef T_LIST_MAC
+	%define T_LIST_MAC
+
 	struc t_list
 		.data:	resq 1
 		.next:	resq 1
 	endstruc
+
+	%macro iter_list_node 1
+		mov %1, [%1 + t_list.next] ; param = param->next
+	%endmacro
+
 %endif

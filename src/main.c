@@ -83,7 +83,8 @@ int		ft_atoi_base(const char *str, const char *base);
 t_list	*ft_create_elem(void *data);
 void	ft_list_push_front(t_list **begin_list, void *data);
 int		ft_list_size(t_list *begin_list);
-void	ft_list_swap(t_list *node1, t_list *node2);
+void	ft_list_swap_data(t_list *node1, t_list *node2);
+void	ft_list_swap(t_list **begin_list, t_list *node1, t_list *node2);
 t_list	*ft_list_at(t_list *begin_list, unsigned int nbr);
 t_list	*ft_list_prev(t_list *begin_list, t_list *node);
 void	ft_list_sort(t_list **begin_list, t_list_data_cmp cmp);
@@ -900,8 +901,8 @@ void	test_list_at(void)
 	clear_list(begin_list);
 }
 
-void	__test_list_swap_time(
-		void (*list_swap_pointer)(t_list *, t_list *), char *name, t_list *node1, t_list *node2)
+void	__test_list_swap_data_time(
+		void (*list_swap_data_pointer)(t_list *, t_list *), char *name, t_list *node1, t_list *node2)
 {
 	unsigned long	start;
 	unsigned long	end;
@@ -911,7 +912,7 @@ void	__test_list_swap_time(
 	if (node2)
 		printf("node2->data: %p (char *) = %s\n", node2->data, (char *)node2->data);
 	start = get_time();
-	list_swap_pointer(node1, node2);
+	list_swap_data_pointer(node1, node2);
 	end = get_time();
 	printf("\n%s(%p, %p) in %lu microseconds\n", name, node1, node2, end - start);
 	if (node1)
@@ -921,7 +922,7 @@ void	__test_list_swap_time(
 	printf("\n");
 }
 
-void	test_list_swap(void)
+void	test_list_swap_data(void)
 {
 	void			*strs[] = {"", "1", NULL, "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
 	unsigned int	position[][2] = {{0, -1}, {-1, 2}, {-1, -1}, {0, 0}, {0, 1}, {0, 6}, {0, 1}, {0, 2}, {0, 1}};
@@ -930,11 +931,11 @@ void	test_list_swap(void)
 
 	for (int i = 0; i < strs_len; i++)
 		ft_list_push_front(&begin_list, strs[i]);
-	printf("TEST: LIST_SWAP\n");
+	printf("TEST: LIST_SWAP_DATA\n");
 	for (int i = 0; i < strs_len; i++)
 	{
 		printf("TEST %i:\n", i + 1);
-		__test_list_swap_time(ft_list_swap, "\tft_list_swap",
+		__test_list_swap_data_time(ft_list_swap_data, "\tft_list_swap_data",
 				ft_list_at(begin_list, position[i][0]),
 				ft_list_at(begin_list, position[i][1]));
 	}
@@ -961,7 +962,7 @@ void	__test_list_prev_time(
 void	test_list_prev(void)
 {
 	void			*strs[] = {"", "1", NULL, "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
-	unsigned int	position[] = {0, -1, 2, 9, 12, 3, 5, 4, 9};
+	unsigned int	position[] = {0, -1, 2, 9, 12, 3, 5, 4, 8};
 	int				strs_len = sizeof(strs) / sizeof(*strs);
 	t_list			*begin_list = NULL;
 
@@ -972,6 +973,47 @@ void	test_list_prev(void)
 	{
 		printf("TEST %i:\n", i + 1);
 		__test_list_prev_time(ft_list_prev, "\tft_list_prev", begin_list, ft_list_at(begin_list, position[i]));
+	}
+	clear_list(begin_list);
+}
+
+void	__test_list_swap_time(
+		void (*list_swap_pointer)(t_list **, t_list *, t_list *),
+		char *name, t_list **begin_list, t_list *node1, t_list *node2)
+{
+	unsigned long	start;
+	unsigned long	end;
+
+	//if (node1)
+	//	printf("node1->data: %p (char *) = %s\n", node1->data, (char *)node1->data);
+	//if (node2)
+	//	printf("node2->data: %p (char *) = %s\n", node2->data, (char *)node2->data);
+	print_list_strings(*begin_list);
+	start = get_time();
+	list_swap_pointer(begin_list, node1, node2);
+	end = get_time();
+	printf("\n%s(%p, %p, %p) in %lu microseconds\n", name, begin_list, node1, node2, end - start);
+	print_list_strings(*begin_list);
+	printf("\n");
+}
+
+void	test_list_swap(void)
+{
+	void			*strs[] = {"", "1", NULL, "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
+	unsigned int	position[][2] = {{0, -1}, {-1, 2}, {-1, -1}, {0, 0}, {0, 1}, {0, 6}, {0, 1}, {0, 2}, {0, 1}};
+	int				strs_len = sizeof(strs) / sizeof(*strs);
+	t_list			*begin_list = NULL;
+
+	for (int i = 0; i < strs_len; i++)
+		ft_list_push_front(&begin_list, strs[i]);
+	printf("TEST: LIST_SWAP\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_list_swap_time(ft_list_swap, "\tft_list_swap",
+				&begin_list,
+				ft_list_at(begin_list, position[i][0]),
+				ft_list_at(begin_list, position[i][1]));
 	}
 	clear_list(begin_list);
 }
@@ -1025,7 +1067,8 @@ int	main(void)
 		test_has_char_duplicated, test_str_has_min_size,
 		test_is_valid_base, atoi_base_main, test_create_elem,
 		test_list_push_front, test_list_size, test_list_at,
-		test_list_swap, test_list_sort, test_list_prev
+		test_list_swap_data, test_list_sort, test_list_prev,
+		test_list_swap
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
