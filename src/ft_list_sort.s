@@ -28,38 +28,6 @@ section .text
 	instruction_double_dereference mov, %1, %2, %3, %4
 %endmacro
 
-%macro	save_param_registers_4 0
-	push rcx
-	push rdx
-	push rsi
-	push rdi
-%endmacro
-
-%macro	recover_param_registers_4 0
-	pop rdi
-	pop rsi
-	pop rdx
-	pop rcx
-%endmacro
-
-%macro	save_param_registers_6 0
-	push r9
-	push r8
-	push rcx
-	push rdx
-	push rsi
-	push rdi
-%endmacro
-
-%macro	recover_param_registers_6 0
-	pop rdi
-	pop rsi
-	pop rdx
-	pop rcx
-	pop r8
-	pop r9
-%endmacro
-
 ;
 
 ft_list_sort: ; rdi(begin_list), rsi(cmp)

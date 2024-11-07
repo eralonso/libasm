@@ -87,6 +87,7 @@ void	ft_list_swap_data(t_list *node1, t_list *node2);
 void	ft_list_swap(t_list **begin_list, t_list *node1, t_list *node2);
 t_list	*ft_list_at(t_list *begin_list, unsigned int nbr);
 t_list	*ft_list_prev(t_list *begin_list, t_list *node);
+int		ft_list_index(t_list *begin_list, t_list *node);
 void	ft_list_sort(t_list **begin_list, t_list_data_cmp cmp);
 void	ft_list_remove_if(t_list **begin_list, void *data_ref, t_list_data_cmp cmp, void (*free_fct)(void *));
 //
@@ -1018,6 +1019,40 @@ void	test_list_swap(void)
 	clear_list(begin_list);
 }
 
+void	__test_list_index_time(
+		int (*list_index_pointer)(t_list *, t_list *), char *name, t_list *begin_list, t_list *node)
+{
+	unsigned long	start;
+	unsigned long	end;
+	int				ret;
+
+	print_list(begin_list);
+	printf("node: %p data: %s\n", node, node ? (char *)node->data : NULL);
+	start = get_time();
+	ret = list_index_pointer(begin_list, node);
+	end = get_time();
+	printf("\n%s(%p, %p) == %i in %lu microseconds\n", name, begin_list, node, ret, end - start);
+	printf("\n");
+}
+
+void	test_list_index(void)
+{
+	void			*strs[] = {"", "1", NULL, "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
+	unsigned int	position[] = {0, -1, 2, 9, 12, 3, 5, 4, 8};
+	int				strs_len = sizeof(strs) / sizeof(*strs);
+	t_list			*begin_list = NULL;
+
+	for (int i = 0; i < strs_len; i++)
+		ft_list_push_front(&begin_list, strs[i]);
+	printf("TEST: LIST_INDEX\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_list_index_time(ft_list_index, "\tft_list_index", begin_list, ft_list_at(begin_list, position[i]));
+	}
+	clear_list(begin_list);
+}
+
 void	__test_list_sort_time(
 		void (*list_sort_pointer)(t_list **, t_list_data_cmp),
 		char *name, t_list **begin_list, t_list_data_cmp cmp)
@@ -1068,7 +1103,7 @@ int	main(void)
 		test_is_valid_base, atoi_base_main, test_create_elem,
 		test_list_push_front, test_list_size, test_list_at,
 		test_list_swap_data, test_list_sort, test_list_prev,
-		test_list_swap
+		test_list_swap, test_list_index
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 

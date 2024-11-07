@@ -1,0 +1,49 @@
+%ifndef PARAMETERS_MAC
+	%define PARAMETERS_MAC
+
+	%macro push_registers 1-*
+		%rep %0
+			push %1
+			%rotate 1
+		%endrep
+	%endmacro
+
+	%macro pop_registers 1-*
+		%rep %0
+			pop %1
+			%rotate 1
+		%endrep
+	%endmacro
+
+	%macro	save_param_registers_4 0
+		push rcx
+		push rdx
+		push rsi
+		push rdi
+	%endmacro
+
+	%macro	recover_param_registers_4 0
+		pop rdi
+		pop rsi
+		pop rdx
+		pop rcx
+	%endmacro
+
+	%macro	save_param_registers_6 0
+		push r9
+		push r8
+		push rcx
+		push rdx
+		push rsi
+		push rdi
+	%endmacro
+
+	%macro	recover_param_registers_6 0
+		pop rdi
+		pop rsi
+		pop rdx
+		pop rcx
+		pop r8
+		pop r9
+	%endmacro
+%endif
