@@ -1001,7 +1001,7 @@ void	__test_list_swap_time(
 void	test_list_swap(void)
 {
 	void			*strs[] = {"", "1", NULL, "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
-	unsigned int	position[][2] = {{0, -1}, {-1, 2}, {-1, -1}, {0, 0}, {0, 1}, {0, 6}, {0, 1}, {0, 2}, {0, 1}};
+	unsigned int	position[][2] = {{2, 5}, {-1, 2}, {-1, -1}, {0, 0}, {0, 1}, {0, 6}, {0, 1}, {0, 2}, {0, 1}};
 	int				strs_len = sizeof(strs) / sizeof(*strs);
 	t_list			*begin_list = NULL;
 
@@ -1103,7 +1103,7 @@ int	main(void)
 		test_is_valid_base, atoi_base_main, test_create_elem,
 		test_list_push_front, test_list_size, test_list_at,
 		test_list_swap_data, test_list_sort, test_list_prev,
-		test_list_swap, test_list_index
+		test_list_index, test_list_swap
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 

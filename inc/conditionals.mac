@@ -6,4 +6,12 @@
 		%3 %4
 	%endmacro
 
+	%macro if_deref 6
+		push %6
+		mov %5, %1
+		cmp %5, %2
+		pop %6
+		%3 %4
+	%endmacro
+
 %endif
