@@ -18,11 +18,11 @@ is_valid_base: ; rdi(base)
 	xor rcx, rcx ; i = 0
 
 	loop_start_1:
-		cmp rcx, is_valid_base_checkers_amount ; i == checkers_amount
+		cmp rcx, is_valid_base_checkers_amount wrt ..gotpc ; i == checkers_amount
 		je loop_end_1
 		push rdi
 		push rcx
-		call [is_valid_base_checkers + (rcx * 8)] ; ret = checkers[i](str) ; it's needed multiply for 8 because it's the size of array elements (pointers)
+		call [is_valid_base_checkers + (rcx * 8) wrt ..gotpc] ; ret = checkers[i](str) ; it's needed multiply for 8 because it's the size of array elements (pointers)
 		pop rcx
 		pop rdi
 		cmp rax, 0 ; ret = 0
@@ -60,13 +60,13 @@ __has_base_valid_characters: ; rdi(str)
 		je str_iter_loop_end
 		xor rdx, rdx ; j = 0
 		loop_start_2:
-			cmp rdx, __has_base_valid_characters_checkers_amount ; j == checkers_amount
+			cmp rdx, __has_base_valid_characters_checkers_amount wrt ..gotpc ; j == checkers_amount
 			je loop_end_2
 			push rdi ; save str
 			push rcx ; save i
 			push rdx ; save j
 			movzx rdi, byte [rdi + rcx]
-			call [__has_base_valid_characters_checkers + (rdx * 8)] ; ret = checkers[j](str[i]) ; it's needed multiply for 8 because it's the size of array elements (pointers)
+			call [__has_base_valid_characters_checkers + (rdx * 8) wrt ..gotpc] ; ret = checkers[j](str[i]) ; it's needed multiply for 8 because it's the size of array elements (pointers)
 			pop rdx ; recover j
 			pop rcx ; recover i
 			pop rdi ; recover str

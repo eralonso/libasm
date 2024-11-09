@@ -6,7 +6,7 @@
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/02 18:06:40 by eralonso          #+#    #+#              #
-#    Updated: 2024/11/07 16:40:44 by eralonso         ###   ########.fr        #
+#    Updated: 2024/11/09 20:31:18 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -73,7 +73,7 @@ TESTS_DEPS := $(addprefix $(TESTS_DEPS_ROOT),$(addsuffix .d,$(TESTS_FILES)))
 IS_WSL := $(shell if [ $$(uname -a | grep -c microsoft) -gt 0 ]; then echo -n "true"; else echo -n ""; fi)
 
 ifneq (,$(IS_WSL))
-TESTS_WSL_FLAGS := -no-pie
+TESTS_WSL_FLAGS := #-no-pie
 endif
 #
 

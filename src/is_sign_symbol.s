@@ -6,9 +6,9 @@ is_sign_symbol:
 	xor rax, rax
 	xor rcx, rcx
 	while_loop:
-		cmp qword [sign_symbols_len], rcx
+		cmp qword [sign_symbols_len wrt ..gotpc], rcx
 		je finish_function
-		cmp byte [sign_symbols + rcx], dil
+		cmp byte [sign_symbols + rcx wrt ..gotpc], dil
 		je set_is_sign_symbol
 		inc rcx
 		jmp while_loop

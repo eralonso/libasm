@@ -11,7 +11,7 @@ ft_read: ; rdi(fd), rsi(buf), rdx(len)
 	jge finish_function
 	manage_errno:
 		mov rcx, rax ; tmp = ret
-		call __errno_location ; ret = &errno ; get errno variable address
+		call __errno_location wrt ..plt ; ret = &errno ; get errno variable address
 		neg rcx ; tmp = -tmp ; absolute value
 		mov [rax], rcx ; *ret = tmp
 		mov rax, -1 ; ret = -1

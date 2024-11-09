@@ -58,18 +58,18 @@ ft_list_swap: ; rdi(t_list **begin_list), rsi(t_list *node1), rdx(t_list *node2)
 		if rsi, rdx, je, .finish_function ; node1 == node2
 
  	.get_nodes_index:
-		get_node_index [rdi], rsi, [first_index] ; first_index = get_node_index(*begin_list, node1)
-		get_node_index [rdi], rdx, [second_index] ; first_index = get_node_index(*begin_list, node2)
+		get_node_index [rdi], rsi, [first_index wrt ..gotpc] ; first_index = get_node_index(*begin_list, node1)
+		get_node_index [rdi], rdx, [second_index wrt ..gotpc] ; first_index = get_node_index(*begin_list, node2)
 
 	.sort_index:
-		if_deref [first_index], [second_index], jl, .sorted_index, ecx, rcx ; first_index < second_index
+		if_deref [first_index wrt ..gotpc], [second_index wrt ..gotpc], jl, .sorted_index, ecx, rcx ; first_index < second_index
 	.swap_index:
-		swap_deref [first_index], [second_index], ecx, rcx ; first_index <-> second_index
+		swap_deref [first_index wrt ..gotpc], [second_index wrt ..gotpc], ecx, rcx ; first_index <-> second_index
 		non_equal_values_swap rsi, rdx ; node1 <-> node2
 	.sorted_index:
 
 	.get_first_node_prev:
-		if dword [first_index], 0, je, .is_start
+		if dword [first_index wrt ..gotpc], 0, je, .is_start
 	.is_not_start:
 		get_node_prev [rdi], rsi
 		jmp .get_first_node_prev_end
@@ -121,6 +121,6 @@ ft_list_swap: ; rdi(t_list **begin_list), rsi(t_list *node1), rdx(t_list *node2)
 	.finish_function:
 		ret
 
-section .data
+section .data write
 	first_index dd 1
 	second_index dd 1

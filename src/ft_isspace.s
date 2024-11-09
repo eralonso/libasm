@@ -6,8 +6,8 @@ section .text
 
 ft_isspace: ; rdi(c)
 	mov rsi, rdi
-	mov rdi, [is_space.characters]
-	mov rdx, is_space.len
+	mov rdi, [is_space.characters wrt ..gotpc]
+	mov rdx, is_space.len wrt ..gotpc
 	call ft_strnchri ; ret = ft_strnchri(is_space_characters, c, is_space_characters_len)
 	cmp rax, -1 ; ret == -1
 	je set_false

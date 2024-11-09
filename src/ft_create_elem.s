@@ -9,7 +9,7 @@ section .text
 ft_create_elem: ; rdi(data)
 	push rdi
 	mov rdi, t_list_size
-	call malloc ; ret = malloc(sizeof(t_list))
+	call malloc wrt ..plt ; ret = malloc(sizeof(t_list))
 	pop rdi
 
 	test rax, rax ; rax == 0

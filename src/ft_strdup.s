@@ -13,7 +13,7 @@ ft_strdup: ; rdi(s)
 	push rdi ; tmp = s
 	mov rdi, rax ; size = ret
 	inc rdi ; size++
-	call malloc ; ret = malloc(size) ; Don't check if malloc fails because original function (strdup) doesn't check it
+	call malloc wrt ..plt ; ret = malloc(size) ; Don't check if malloc fails because original function (strdup) doesn't check it
 	mov rdi, rax ; dst = ret
 	pop rsi ; src = tmp
 	call ft_strcpy ; ret = ft_strcpy(dst, src)

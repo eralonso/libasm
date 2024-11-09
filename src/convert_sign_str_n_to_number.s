@@ -25,7 +25,7 @@ convert_sign_str_n_to_number: ; rdi(str), rsi(n)
 		pop rdx ; recover minus_sign_count from stack
 		cmp al, 0 ; ret == 0
 		je calc_final_sign
-		cmp r8b, [minus_sign] ; tmp != '-'
+		cmp r8b, [minus_sign wrt ..gotpc] ; tmp != '-'
 		jne skip_add_minus_sign
 		inc rdx ; minus_sign_count++
 		skip_add_minus_sign:

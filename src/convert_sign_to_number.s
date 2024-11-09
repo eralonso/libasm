@@ -4,7 +4,7 @@ section .text
 
 convert_sign_to_number: ; rdi(c)
 	mov al, 1 ; ret = 1
-	cmp dil, [minus_sign] ; c == '-'
+	cmp dil, [minus_sign wrt ..gotpc]  ; c == '-'
 	jne finish_function
 	neg al ; ret = -ret
 	finish_function:
