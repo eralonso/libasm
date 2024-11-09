@@ -1,4 +1,6 @@
 %include "t_list.mac"
+%include "conditionals.mac"
+%include "parameters.mac"
 
 global ft_list_sort
 
