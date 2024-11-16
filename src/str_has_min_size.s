@@ -1,5 +1,7 @@
 global str_has_min_size
 
+default rel
+
 extern ft_strlen
 
 section .text

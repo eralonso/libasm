@@ -1107,7 +1107,7 @@ int	main(void)
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
-	for	(int test = tests_size - 1; test < tests_size; test++)
+	for	(int test = tests_size; test < tests_size; test++)
 	{
 		tests[test]();
 		if (test < tests_size - 1)

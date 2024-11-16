@@ -6,10 +6,11 @@
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/02 18:06:40 by eralonso          #+#    #+#              #
-#    Updated: 2024/11/09 20:31:18 by eralonso         ###   ########.fr        #
+#    Updated: 2024/11/16 23:42:01 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+ORIGIN_NAME := asm
 NAME := asm
 
 TESTS_PROGRAM_NAME := asm_tests
@@ -138,7 +139,7 @@ tests: $(TESTS_PROGRAM_NAME)
 $(TESTS_PROGRAM_NAME): $(TESTS_BIN_ROOT)
 
 $(TESTS_PROGRAM_NAME): $(NAME) $(TESTS_OBJS)
-	$(CC) $(TESTS_WSL_FLAGS) $(CFLAGS) $(ASAN_FLAGS) $(DEBUG_FLAGS) $(TESTS_OBJS) $(NAME) -o $@
+	$(CC) $(TESTS_WSL_FLAGS) $(CFLAGS) $(ASAN_FLAGS) $(DEBUG_FLAGS) $(TESTS_OBJS) -L$(BIN_ROOT) -l$(ORIGIN_NAME) -o $@
 
 clean:
 	$(call remove_dir_file,$(OBJS_ROOT),$(OBJS))

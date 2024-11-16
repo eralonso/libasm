@@ -1,5 +1,7 @@
 global has_char_duplicated
 
+default rel
+
 section .text
 
 has_char_duplicated: ; rdi(str)

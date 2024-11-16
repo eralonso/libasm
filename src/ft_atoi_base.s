@@ -1,5 +1,7 @@
 global ft_atoi_base
 
+default rel
+
 extern is_valid_base
 extern str_find_first_not_of
 extern ft_isspace
@@ -31,7 +33,7 @@ ft_atoi_base: ; rdi(str), rsi(base)
 __ft_atoi_base: ; rdi(str), rsi(base)
 	push rsi
 	push rdi
-    mov rsi, ft_isspace
+    lea rsi, [ft_isspace]
     call str_find_first_not_of ; ret = str_find_first_not_of(str, ft_isspace)
     cmp rax, 0 ; ret < 0
 	pop rdi
@@ -40,7 +42,7 @@ __ft_atoi_base: ; rdi(str), rsi(base)
 	add rdi, rax ; str += ret
     push rsi
     push rdi
-	mov rsi, is_sign_symbol
+	lea rsi, [is_sign_symbol]
 	call str_find_first_not_of ; ret = str_find_first_not_of(str, is_sign_symbol)
     cmp rax, 0 ; ret < 0
     pop rdi

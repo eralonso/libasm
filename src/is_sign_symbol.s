@@ -1,14 +1,19 @@
 global is_sign_symbol
 
+default rel
+
 section .text
 
 is_sign_symbol:
 	xor rax, rax
 	xor rcx, rcx
 	while_loop:
-		cmp qword [sign_symbols_len wrt ..gotpc], rcx
+		mov rdx, sign_symbols.len
+		cmp rdx, rcx
 		je finish_function
-		cmp byte [sign_symbols + rcx wrt ..gotpc], dil
+		lea rdx, [sign_symbols.characters]
+		add rdx, rcx
+		cmp byte [rdx] , dil
 		je set_is_sign_symbol
 		inc rcx
 		jmp while_loop
@@ -18,5 +23,6 @@ is_sign_symbol:
 		ret
 
 section .rodata
-	sign_symbols: db "+-"
-	sign_symbols_len: dq $ - sign_symbols
+	sign_symbols:
+		.characters db "+-"
+		.len equ $ - sign_symbols

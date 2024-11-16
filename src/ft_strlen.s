@@ -1,5 +1,7 @@
 global ft_strlen
 
+default rel
+
 section .text
 
 ft_strlen:
