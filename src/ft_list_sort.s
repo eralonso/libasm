@@ -102,16 +102,6 @@ get_optimal_pivot: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end)
 
 quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_index)
 	
-	get_init_node:
-		mov r9, rdx
-		call get_node ; ret = get_node(begin_list, init)
-		mov [init_node], rax ; init_node = ret
-
-	get_end_node:
-		mov r9, rcx
-		call get_node ; ret = get_node(begin_list, end)
-		mov [end_node], rax ; end_node = ret
-
 	get_pivot_node:
 		mov r9, r8
 		call get_node ; ret = get_node(begin_list, pivot_index)
@@ -129,6 +119,11 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 			jge loop_end
 
 		loop_1_start:
+
+			get_init_node:
+				mov r9, [init_iter]
+				call get_node ; ret = get_node(begin_list, init)
+				mov [init_node], rax ; init_node = ret
 
 			cmp_init_node_value:
 				save_param_registers_6
@@ -163,6 +158,11 @@ quicksort_partition: ; rdi(begin_list), rsi(cmp), rdx(init), rcx(end), r8(pivot_
 		loop_1_end:
 
 		loop_2_start:
+
+			get_end_node:
+				mov r9, [end_iter]
+				call get_node ; ret = get_node(begin_list, end)
+				mov [end_node], rax ; end_node = ret
 
 			cmp_end_node_value:
 				save_param_registers_6

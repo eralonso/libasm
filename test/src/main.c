@@ -7,103 +7,9 @@
 #include <sys/time.h>
 #include <limits.h>
 
-//TODO: #include "libasm.h"
-
-//START: ATOI_BASE_MAIN
-
-typedef int	(*t_char_cmp)(int);
-
-typedef t_char_cmp	t_char_checker;
-typedef int	(*t_str_checker)(const char *);
-typedef int	(*t_atoi_base_test)(void);
-
-//END: ATOI_BASE_MAIN
-
-typedef int (*t_list_data_cmp)(const char *, const char *);
-
-//typedef int (*t_char_cmp)(int);
-
-typedef struct s_entry			t_entry;
-typedef struct s_linked_list	t_linked_list;
-
-typedef union	u_entry_function
-{
-	size_t	(*strlen)(char *str);
-}	t_entry_function;
-
-struct	s_entry
-{
-	char				*name;
-	t_entry_function	fun;
-};
-
-typedef union	u_linked_list_types
-{
-	t_entry	*entry;
-}	t_linked_list_types;
-
-struct	s_linked_list
-{
-	t_linked_list_types	content;
-	t_linked_list		*next;
-};
-
-//BONUS
-
-typedef struct s_list t_list;
-
-struct s_list
-{
-	void	*data;
-	t_list	*next;
-};
-
-//
-
-size_t	ft_strlen(const char *str);
-char	*ft_strcpy(char *dst, const char *src);
-int		ft_strcmp(const char *s1, const char *s2);
-ssize_t	ft_write(int fd, const void *buf, size_t count);
-ssize_t	ft_read(int fd, void *buf, size_t count);
-char	*ft_strdup(const char *s);
-char	convert_sign_to_number(const char c);
-ssize_t	ft_strnchri(const char *s, int c, size_t n);
-ssize_t	ft_strchri(const char *s, int c);
-int		is_sign_symbol(int c);
-char	convert_sign_str_n_to_number(const char *str, const size_t n);
-int		ft_isspace(int c);
-ssize_t	str_n_find_first_not_of(const char *str, int (*cmp_function)(int), size_t n);
-ssize_t	str_find_first_not_of(const char *str, int (*cmp_function)(int));
-int		has_char_duplicated(const char *str);
-int		str_has_min_size(const char *str, const size_t min_size);
-int		is_valid_base(const char *str);
-int		ft_atoi_base(const char *str, const char *base);
-
-//BONUS
-t_list	*ft_create_elem(void *data);
-void	ft_list_push_front(t_list **begin_list, void *data);
-int		ft_list_size(t_list *begin_list);
-void	ft_list_swap_data(t_list *node1, t_list *node2);
-void	ft_list_swap(t_list **begin_list, t_list *node1, t_list *node2);
-t_list	*ft_list_at(t_list *begin_list, unsigned int nbr);
-t_list	*ft_list_prev(t_list *begin_list, t_list *node);
-int		ft_list_index(t_list *begin_list, t_list *node);
-void	ft_list_sort(t_list **begin_list, t_list_data_cmp cmp);
-void	ft_list_remove_if(t_list **begin_list, void *data_ref, t_list_data_cmp cmp, void (*free_fct)(void *));
-//
-
-char	*get_string_bool(int res)
-{
-	return (res ? "True": "False");
-}
-
-unsigned long	get_time(void)
-{
-	struct timeval	tv;
-
-	gettimeofday(&tv, NULL);
-	return (tv.tv_sec * 1000000 + tv.tv_usec);
-}
+#include "libasm.h"
+#include "tests.h"
+#include "utils.h"
 
 void	__test_strlen_time(size_t (*stringlen)(const char *), char *name, char *str)
 {
@@ -1073,9 +979,9 @@ void	__test_list_sort_time(
 
 void	test_list_sort(void)
 {
-	// void			*strs[] = {"2", "1", "0", "8", "4", "9", "7", "3", "5"};
+	void			*strs[] = {"2", "1", "0", "8", "4", "9", "7", "3", "5", "6"};
 	// void			*strs[] = {"8", "7", "6", "5", "4", "3", "2", "0", "1"};
-	void			*strs[] = {"2", "0", "1"};
+	// void			*strs[] = {"0", "2", "1"};
 	int				strs_len = sizeof(strs) / sizeof(*strs);
 	t_list			*begin_list = NULL;
 
@@ -1085,7 +991,7 @@ void	test_list_sort(void)
 	for (int i = 0; i < 1; i++)
 	{
 		printf("TEST %i:\n", i + 1);
-		__test_list_sort_time(ft_list_sort, "\tft_list_sort", &begin_list, strcmp);
+		__test_list_sort_time(ft_list_sort, "\tft_list_sort", &begin_list, atoicmp);
 	}
 	clear_list(begin_list);
 }
@@ -1102,12 +1008,12 @@ int	main(void)
 		test_has_char_duplicated, test_str_has_min_size,
 		test_is_valid_base, atoi_base_main, test_create_elem,
 		test_list_push_front, test_list_size, test_list_at,
-		test_list_swap_data, test_list_sort, test_list_prev,
-		test_list_index, test_list_swap
+		test_list_swap_data, test_list_prev,
+		test_list_index, test_list_swap, test_list_sort
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
-	for	(int test = tests_size; test < tests_size; test++)
+	for	(int test = tests_size - 1; test < tests_size; test++)
 	{
 		tests[test]();
 		if (test < tests_size - 1)

@@ -170,6 +170,16 @@ int	qs__set_rigth_place_pivot(int *arr, int init, int end, int pivot_index)
 // 1 3 2 4 -> i = 2 | j = 3
 // 1 2 3 4 -> i = 3 | j = 2 | pivot_index = 1
 
+//1: 1 2 0 -> low = 0 | high = 2
+//pivot: 1
+//1 0 2 -> i = 1 | j = 2
+//0 1 2 -> i = 2 | j = 1 | pivot_index = 1
+
+//1 2 0
+//1 0 2
+//1 2 0
+//1 0 2
+
 void	qs__loop(int *arr, int init, int end)
 {
 	int	pivot_index;
@@ -196,7 +206,8 @@ void	quicksort(int *arr)
 
 void	test_quicksort(void)
 {
-	int		n[6][100] = {
+	int		n[7][100] = {
+		{1, 2, 0, int_end},
 		{9, 1, 8, 2, -4, int_end},
 		{0, 1, int_end},
 		{-1, -1, int_end},
