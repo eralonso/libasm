@@ -55,6 +55,7 @@ void	ft_list_swap(t_list **begin_list, t_list *node1, t_list *node2);
 t_list	*ft_list_at(t_list *begin_list, unsigned int nbr);
 t_list	*ft_list_prev(t_list *begin_list, t_list *node);
 int		ft_list_index(t_list *begin_list, t_list *node);
+void	ft_list_del(t_list **begin_list, t_list *node, void (*del)(void *));
 
 ///
 

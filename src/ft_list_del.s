@@ -35,15 +35,17 @@ ft_list_del: ; rdi(t_list **begin_list), rsi(t_list *node), rdx(void (*free_fct)
 		mov_deref [rax + t_list.next], [rsi + t_list.next], rcx, rcx
 
 	erase_data:
-		save_param_registers_4
 
 		.null_check:
 			if rdx, 0, je, erase_node
 
+		save_param_registers_4
 		mov rdi, [rsi + t_list.data]
 		call rdx
+		recover_param_registers_4
 
 	erase_node:
+		save_param_registers_4
 		mov rdi, rsi
 		call free wrt ..plt
 		recover_param_registers_4

@@ -675,6 +675,20 @@ void	clear_list(t_list *begin)
 	return ;
 }
 
+void	full_clear_list(t_list *begin)
+{
+	t_list	*tmp;
+
+	while (begin != 0)
+	{
+		tmp = begin->next;
+		free(begin->data);
+		free(begin);
+		begin = tmp;
+	}
+	return ;
+}
+
 void	print_list(t_list *begin)
 {
 	unsigned int	index;
@@ -727,6 +741,7 @@ void	__test_list_push_front_time(
 	printf("AFTER\n");
 	print_list(*begin_list);
 	printf("\n");
+	return ;
 }
 
 void	test_list_push_front(void)
@@ -742,6 +757,7 @@ void	test_list_push_front(void)
 		__test_list_push_front_time(ft_list_push_front, "\tft_list_push_front", &begin_list, strs[i]);
 	}
 	clear_list(begin_list);
+	return ;
 }
 
 void	__test_list_size_time(
@@ -756,6 +772,7 @@ void	__test_list_size_time(
 	end = get_time();
 	printf("%s(%p) == %i in %lu microseconds\n", name, begin_list, size, end - start);
 	printf("\n");
+	return ;
 }
 
 void	test_list_size(void)
@@ -772,6 +789,7 @@ void	test_list_size(void)
 		ft_list_push_front(&begin_list, strs[i]);
 	}
 	clear_list(begin_list);
+	return ;
 }
 
 void	__test_list_at_time(
@@ -787,6 +805,7 @@ void	__test_list_at_time(
 	end = get_time();
 	printf("\n%s(%p, %u) == %p  in %lu microseconds\n", name, begin_list, nbr, ret, end - start);
 	printf("\n");
+	return ;
 }
 
 void	test_list_at(void)
@@ -805,6 +824,7 @@ void	test_list_at(void)
 		__test_list_at_time(ft_list_at, "\tft_list_at", begin_list, position[i]);
 	}
 	clear_list(begin_list);
+	return ;
 }
 
 void	__test_list_swap_data_time(
@@ -826,6 +846,7 @@ void	__test_list_swap_data_time(
 	if (node2)
 		printf("node2->data: %p (char *) = %s\n", node2->data, (char *)node2->data);
 	printf("\n");
+	return ;
 }
 
 void	test_list_swap_data(void)
@@ -846,6 +867,7 @@ void	test_list_swap_data(void)
 				ft_list_at(begin_list, position[i][1]));
 	}
 	clear_list(begin_list);
+	return ;
 }
 
 void	__test_list_prev_time(
@@ -863,6 +885,7 @@ void	__test_list_prev_time(
 	printf("\n%s(%p, %p) == %p && ret->data = %s in %lu microseconds\n",
 			name, begin_list, node, ret, ret ? (char *)ret->data : NULL, end - start);
 	printf("\n");
+	return ;
 }
 
 void	test_list_prev(void)
@@ -881,6 +904,7 @@ void	test_list_prev(void)
 		__test_list_prev_time(ft_list_prev, "\tft_list_prev", begin_list, ft_list_at(begin_list, position[i]));
 	}
 	clear_list(begin_list);
+	return ;
 }
 
 void	__test_list_swap_time(
@@ -901,6 +925,7 @@ void	__test_list_swap_time(
 	printf("\n%s(%p, %p, %p) in %lu microseconds\n", name, begin_list, node1, node2, end - start);
 	print_list_strings(*begin_list);
 	printf("\n");
+	return ;
 }
 
 void	test_list_swap(void)
@@ -922,6 +947,7 @@ void	test_list_swap(void)
 				ft_list_at(begin_list, position[i][1]));
 	}
 	clear_list(begin_list);
+	return ;
 }
 
 void	__test_list_index_time(
@@ -938,6 +964,7 @@ void	__test_list_index_time(
 	end = get_time();
 	printf("\n%s(%p, %p) == %i in %lu microseconds\n", name, begin_list, node, ret, end - start);
 	printf("\n");
+	return ;
 }
 
 void	test_list_index(void)
@@ -956,6 +983,7 @@ void	test_list_index(void)
 		__test_list_index_time(ft_list_index, "\tft_list_index", begin_list, ft_list_at(begin_list, position[i]));
 	}
 	clear_list(begin_list);
+	return ;
 }
 
 void	__test_list_sort_time(
@@ -974,6 +1002,7 @@ void	__test_list_sort_time(
 	printf("AFTER\n");
 	print_list_strings(*begin_list);
 	printf("\n");
+	return ;
 }
 
 void	test_list_sort(void)
@@ -993,6 +1022,52 @@ void	test_list_sort(void)
 		__test_list_sort_time(ft_list_sort, "\tft_list_sort", &begin_list, atoicmp);
 	}
 	clear_list(begin_list);
+	return ;
+}
+
+void	__test_list_del_time(
+		void (*list_del_pointer)(t_list **, t_list *, void (*)(void *)), char *name, t_list **begin_list, t_list *node, void (*del)(void *))
+{
+	unsigned long	start;
+	unsigned long	end;
+
+	print_list(*begin_list);
+	printf("node: %p data: %s\n", node, node ? (char *)node->data : NULL);
+	start = get_time();
+	list_del_pointer(begin_list, node, del);
+	end = get_time();
+	printf("\n%s(%p, %p) in %lu microseconds\n", name, begin_list, node, end - start);
+	print_list(*begin_list);
+	printf("\n");
+	return ;
+}
+
+void	test_list_del(void)
+{
+	void			*strs[] = {strdup(""), strdup("1"), strdup("aaa"), strdup("holamund"), strdup("holamundo"), strdup("+123"), strdup("1234-"), strdup("01"), "01234657"};
+	void			(*del_function[])(void *) = {NULL, free, free, free, free, free, free, free, free};
+	unsigned int	position[] = {0, -1, 2, 9, 12, 3, 5, 4, 8};
+	int				strs_len = sizeof(strs) / sizeof(*strs);
+	t_list			*begin_list = NULL;
+
+	for (int i = 0; i < strs_len; i++)
+		ft_list_push_front(&begin_list, strs[i]);
+	printf("TEST: LIST_DEL\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_list_del_time(ft_list_del, "\tft_list_del",
+				&begin_list, ft_list_at(begin_list, position[i]), del_function[i]);
+	}
+	print_list(begin_list);
+	full_clear_list(begin_list);
+	return ;
+}
+
+void	test_list_remove_if(void)
+{
+	//void	ft_list_remove_if(t_list **begin_list, void *data_ref, t_list_data_cmp cmp, void (*free_fct)(void *))
+	return ;
 }
 
 int	main(void)
@@ -1008,11 +1083,12 @@ int	main(void)
 		test_is_valid_base, atoi_base_main, test_create_elem,
 		test_list_push_front, test_list_size, test_list_at,
 		test_list_swap_data, test_list_prev,
-		test_list_index, test_list_swap, test_list_sort
+		test_list_index, test_list_swap, test_list_sort,
+		test_list_del, test_list_remove_if
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
-	for	(int test = tests_size - 1; test < tests_size; test++)
+	for	(int test = tests_size - 2; test < tests_size - 1; test++)
 	{
 		tests[test]();
 		if (test < tests_size - 1)
