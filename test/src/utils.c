@@ -1,3 +1,6 @@
+#include <sys/time.h>
+#include <stdlib.h>
+
 char	*get_string_bool(int res)
 {
 	return (res ? "True": "False");

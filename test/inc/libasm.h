@@ -22,6 +22,9 @@ struct s_list
 	t_list	*next;
 };
 
+typedef int (*t_list_data_cmp)(const char *, const char *);
+
+
 /// MANDATORY
 
 int		ft_atoi_base(const char *str, const char *base);

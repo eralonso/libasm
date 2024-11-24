@@ -20,7 +20,7 @@ ft_list_prev: ; rdi(t_list *begin_list), rsi(t_list *node)
 		if rsi, 0, je, finish_function ; if (node == 0) return ret
 
 	check_is_first:
-		if rdi, rsi, je, finish_function ; if (node == 0) return ret
+		if rdi, rsi, je, finish_function ; if (node == begin_list) return ret
 
 	mov rax, rdi ; ret = begin_list
 	loop_start:

@@ -6,7 +6,7 @@
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/02 18:06:40 by eralonso          #+#    #+#              #
-#    Updated: 2024/11/16 23:42:01 by eralonso         ###   ########.fr        #
+#    Updated: 2024/11/24 16:54:06 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,10 +31,11 @@ DEPS_ROOT := .dep/
 BIN_ROOT := bin/
 INC_ROOT := inc/
 
-TESTS_SRCS_ROOT := src/
-TESTS_OBJS_ROOT := .obj/
-TESTS_DEPS_ROOT := .dep/
+TESTS_SRCS_ROOT := test/src/
+TESTS_OBJS_ROOT := test/.obj/
+TESTS_DEPS_ROOT := test/.dep/
 TESTS_BIN_ROOT := bin/
+TESTS_INC_ROOT := test/inc/
 
 SRCS_DIRS := ./
 SRCS_DIRS := $(subst :,$(SPACE),$(SRCS_DIRS))
@@ -42,6 +43,7 @@ SRCS_DIRS := $(addprefix $(SRCS_ROOT),$(SRCS_DIRS))
 SRCS_DIRS := $(subst $(SPACE),:,$(SRCS_DIRS))
 
 INC_DIRS := $(INC_ROOT)
+TESTS_INC_DIRS := $(TESTS_INC_ROOT)
 
 TESTS_SRCS_DIRS := ./
 TESTS_SRCS_DIRS := $(subst :,$(SPACE),$(TESTS_SRCS_DIRS))
@@ -54,9 +56,10 @@ FILES := ft_strlen ft_strcpy ft_strcmp ft_write ft_read \
 		 ft_isspace str_n_find_first_not_of str_find_first_not_of \
 		 has_char_duplicated str_has_min_size is_valid_base ft_atoi_base \
 		 ft_create_elem ft_list_push_front ft_list_size ft_list_swap_data \
-		 ft_list_at ft_list_sort exit ft_list_prev ft_list_swap ft_list_index
+		 ft_list_at ft_list_sort exit ft_list_prev ft_list_swap ft_list_index \
+		 ft_list_del ft_list_remove_if
 
-TESTS_FILES := main
+TESTS_FILES := main utils
 
 SUFFIX := s
 
@@ -92,9 +95,10 @@ TESTS_DEPS_FLAGS := -MMD -MF
 NAME := $(addprefix $(BIN_ROOT),$(NAME))
 TESTS_PROGRAM_NAME := $(addprefix $(TESTS_BIN_ROOT),$(TESTS_PROGRAM_NAME))
 
-TO_CREATE_DIRS := $(OBJS_ROOT) $(DEPS_ROOT) $(BIN_ROOT)
+TO_CREATE_DIRS := $(OBJS_ROOT) $(DEPS_ROOT) $(BIN_ROOT) $(TESTS_OBJS_ROOT) $(TESTS_DEPS_ROOT)
 
 INCLUDES := $(addprefix -I,$(INC_DIRS))
+TESTS_INCLUDES := $(addprefix -I,$(TESTS_INC_DIRS))
 
 vpath %.$(SUFFIX) $(SRCS_DIRS)
 vpath %.$(TESTS_SUFFIX) $(TESTS_SRCS_DIRS)
@@ -116,7 +120,7 @@ $(OBJS_ROOT)%.o: %.$(SUFFIX) $(OBJS_ROOT) $(DEPS_ROOT)
 	$(AS) $(ASFLAGS) $(AS_MAKEFILE_DEPENDCY_FLAG) $(DEPS_ROOT)$(basename $*).d $(INCLUDES) $< -o $@
 
 $(TESTS_OBJS_ROOT)%.o: %.$(TESTS_SUFFIX) $(TESTS_OBJS_ROOT) $(TESTS_DEPS_ROOT)
-	$(CC) -c $(CFLAGS) $(ASAN_FLAGS) $(DEBUG_FLAGS) $(TESTS_DEPS_FLAGS) $(TESTS_DEPS_ROOT)$(basename $*).d $< -o $@
+	$(CC) -c $(CFLAGS) $(ASAN_FLAGS) $(DEBUG_FLAGS) $(TESTS_INCLUDES) $(TESTS_DEPS_FLAGS) $(TESTS_DEPS_ROOT)$(basename $*).d $< -o $@
 
 all: $(NAME)
 

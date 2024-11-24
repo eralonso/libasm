@@ -11,9 +11,6 @@ typedef int	(*t_atoi_base_test)(void);
 
 //
 
-typedef int (*t_list_data_cmp)(const char *, const char *);
-
-
 
 // TESTING METHOD
 

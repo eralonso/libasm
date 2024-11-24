@@ -1,0 +1,15 @@
+ssizet	ftstrnchri(const char *s, int c, size_t n);
+ssizet	ftstrnchri(const char s);
+ssizet	ftstrnchri( const char *s, int c, size_t n);
+ssizet	ftstrnchri(const char *s, int c, size_t n );
+ssizet	ftstrnchri( const char *s, int c, size_t n );
+ssizet	**ftstrnchri( const char *s, int c, size_t n );
+ssizet	**( const char *s, int c, size_t n );
+ssizet*	ftstrnchri( const char *s, int c, size_t n );
+ssizet*	f( const char *s, int c, size_t n );
+ssizet*	f( const char * s, int c, size_t n );
+*	ftstrnchri( const char *s, int c, size_t n );
+ssizea			 a
+a
+R
+(const char *s, int c, size_t n);
