@@ -91,12 +91,12 @@ __has_base_valid_characters: ; rdi(str)
 finish_function:
 	ret ; return ret
 
-section .rodata
+section .data
 	is_valid_base_checkers:
-		.functions dq __has_base_min_size, __has_base_no_duplicated, __has_base_valid_characters
-		.amount equ (($ - is_valid_base_checkers) / 8)
+		.functions: dq __has_base_min_size, __has_base_no_duplicated, __has_base_valid_characters
+		.amount: equ (($ - is_valid_base_checkers.functions) / 8)
 
 	__has_base_valid_characters_checkers:
-		.functions dq ft_isspace, is_sign_symbol
-		.amount equ (($ - __has_base_valid_characters_checkers) / 8)
+		.functions: dq ft_isspace, is_sign_symbol
+		.amount: equ (($ - __has_base_valid_characters_checkers.functions) / 8)
 
