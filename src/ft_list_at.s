@@ -2,7 +2,7 @@
 
 global ft_list_at
 
-ft_list_at: ; rdi(begin_list), rsi(nbr)
+ft_list_at: ; rdi(t_list *begin_list), rsi(unsigned int nbr)
 	
 	init_return_value:
 		xor rax, rax ; ret = 0
