@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 
 #include "libasm.h"
 #include "tests.h"
@@ -1064,9 +1065,171 @@ void	test_list_del(void)
 	return ;
 }
 
+void	__test_list_last_time(t_list *(*list_last_pointer)(t_list *),
+		char *name, t_list *begin_list)
+{
+	unsigned long	start;
+	unsigned long	end;
+	t_list			*res;
+
+	printf("BEFORE\n");
+	print_list_strings(begin_list);
+	start = get_time();
+	res = list_last_pointer(begin_list);
+	end = get_time();
+	printf("%s(%p) == %p && res->data == %s in %lu microseconds\n", name, begin_list, res, (char *)(res ? res->data : NULL), end - start);
+	printf("\n");
+	return ;
+}
+
+void	test_list_last(void)
+{
+	void			*strs[] = {"2", "1", "0", "8", "4", "9", "7", "3", "5", "6"};
+	int				strs_len = sizeof(strs) / sizeof(*strs);
+	t_list			*begin_list = NULL;
+
+	//for (int i = 0; i < strs_len; i++)
+	//	ft_list_push_front(&begin_list, strs[i]);
+	printf("TEST: LIST_LAST\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_list_last_time(ft_list_last, "\tft_list_last", begin_list);
+		ft_list_push_front(&begin_list, strs[i]);
+		if (i & 1)
+			ft_list_del(&begin_list, ft_list_last(begin_list), NULL);
+	}
+	clear_list(begin_list);
+	return ;
+}
+
+void	__test_list_push_back_time(
+		void (*list_push_back_pointer)(t_list **, void *),
+		char *name, t_list **begin_list, void *data)
+{
+	unsigned long	start;
+	unsigned long	end;
+
+	printf("BEFORE\n");
+	print_list(*begin_list);
+	start = get_time();
+	list_push_back_pointer(begin_list, data);
+	end = get_time();
+	printf("%s(%p, %p) in %lu microseconds\n", name, begin_list, data, end - start);
+	printf("AFTER\n");
+	print_list(*begin_list);
+	printf("\n");
+	return ;
+}
+
+void	test_list_push_back(void)
+{
+	void	*strs[] = {"", "1", "hola mund", "holamund", "holamundo", "+123", "1234-", "01", "01234657"};
+	int		strs_len = sizeof(strs) / sizeof(*strs);
+	t_list	*begin_list = NULL;
+
+	printf("TEST: LIST_PUSH_BACK\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_list_push_back_time(ft_list_push_back, "\tft_list_push_back", &begin_list, strs[i]);
+	}
+	clear_list(begin_list);
+	return ;
+}
+
+void	__test_list_remove_if_time(
+		void (*list_remove_if_pointer)(t_list **, void *,
+		int (*)(), void (*)(void *)), char *name,
+		t_list **begin_list, void *data_ref, int (*cmp)(), void (*del)(void *))
+{
+	unsigned long	start;
+	unsigned long	end;
+
+	print_list(*begin_list);
+	printf("data_ref: %s\n", (char *)data_ref);
+	start = get_time();
+	list_remove_if_pointer(begin_list, data_ref, cmp, del);
+	end = get_time();
+	printf("\n%s(%p, %p, %p, %p) in %lu microseconds\n", name, begin_list, data_ref, cmp, del, end - start);
+	print_list(*begin_list);
+	printf("\n");
+	return ;
+}
+
 void	test_list_remove_if(void)
 {
-	//void	ft_list_remove_if(t_list **begin_list, void *data_ref, t_list_data_cmp cmp, void (*free_fct)(void *))
+	void			*strs[] = {strdup(""), strdup("1"), strdup("aaa"), strdup("holamund"), strdup("holamundo"), strdup("+123"), strdup("1234-"), strdup("01"), "01234657"};
+	void			*data_ref[] = {"", "aaa", "01234657", "holamund", "holamundo", "+123", "1234-", "01", "1"};
+	void			(*del_function[])(void *) = {free, free, NULL, free, free, free, free, free, free};
+	int				(*cmp_function[])(const char*, const char *) = {strcmp, strcmp, strcmp, NULL, strcmp, strcmp, strcmp, strcmp, strcmp};
+	int				strs_len = sizeof(strs) / sizeof(*strs);
+	t_list			*begin_list = NULL;
+
+	for (int i = 0; i < strs_len; i++)
+		ft_list_push_back(&begin_list, strs[i]);
+	printf("TEST: LIST_REMOVE_IF\n");
+	for (int i = 0; i < strs_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_list_remove_if_time(ft_list_remove_if, "\tft_list_remove_if",
+				&begin_list, data_ref[i], cmp_function[i], del_function[i]);
+	}
+	print_list(begin_list);
+	full_clear_list(begin_list);
+	return ;
+}
+
+int	get_exit_value(void (*exit_pointer)(int), int value)
+{
+	int	ret = 37;
+	int	status;
+	int	pid;
+
+	pid = fork();
+	if (pid == -1)
+		return (-1);
+	else if (!pid)
+	{
+		exit_pointer(value);
+		printf("exit fails\n");
+		exit(1);
+	}
+	wait(&status);
+	if (WIFEXITED(status))
+		ret = WEXITSTATUS(status);
+	//else if (WIFSIGNALED(status))
+	//	ret = WTERMSIG(status);
+	return (ret);
+}
+
+void	__test_exit_time(void (*exit_pointer)(int), char *name, int value)
+{
+	unsigned long	start;
+	unsigned long	end;
+	int				res;
+
+	printf("value: %i\n", value);
+	start = get_time();
+	res = get_exit_value(exit_pointer, value);
+	end = get_time();
+	printf("%s(%i) == %i in %lu microseconds\n", name, value, res, end - start);
+	printf("\n");
+	return ;
+}
+
+void	test_exit(void)
+{
+	int	exit_values[] = {1, 4, 6, 128, -1, 127, 130, 131, 0, 255, 254, 256, 257};
+	int tests_len = sizeof(exit_values) / sizeof(*exit_values);
+
+	printf("TEST: EXIT\n");
+	for (int i = 0; i < tests_len; i++)
+	{
+		printf("TEST %i:\n", i + 1);
+		__test_exit_time(exit, "\texit", exit_values[i]);
+		__test_exit_time(ft_exit, "\tft_exit", exit_values[i]);
+	}
 	return ;
 }
 
@@ -1084,11 +1247,12 @@ int	main(void)
 		test_list_push_front, test_list_size, test_list_at,
 		test_list_swap_data, test_list_prev,
 		test_list_index, test_list_swap, test_list_sort,
-		test_list_del, test_list_remove_if
+		test_list_del, test_list_last, test_list_push_back,
+		test_list_remove_if, test_exit, test_is_valid_base
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
-	for	(int test = tests_size - 2; test < tests_size - 1; test++)
+	for	(int test = tests_size - 1; test < tests_size; test++)
 	{
 		tests[test]();
 		if (test < tests_size - 1)

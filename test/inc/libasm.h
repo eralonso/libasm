@@ -48,6 +48,7 @@ ssize_t	str_find_first_not_of(const char *str, int (*cmp_function)(int));
 int		has_char_duplicated(const char *str);
 int		str_has_min_size(const char *str, const size_t min_size);
 int		is_valid_base(const char *str);
+void	ft_exit(int status);
 
 t_list	*ft_create_elem(void *data);
 void	ft_list_swap_data(t_list *node1, t_list *node2);
@@ -56,6 +57,8 @@ t_list	*ft_list_at(t_list *begin_list, unsigned int nbr);
 t_list	*ft_list_prev(t_list *begin_list, t_list *node);
 int		ft_list_index(t_list *begin_list, t_list *node);
 void	ft_list_del(t_list **begin_list, t_list *node, void (*del)(void *));
+void	ft_list_push_back(t_list **begin_list, void *data);
+t_list	*ft_list_last(t_list *begin_list);
 
 ///
 
