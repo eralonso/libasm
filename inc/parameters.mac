@@ -15,6 +15,16 @@
 		%endrep
 	%endmacro
 
+	%macro	save_param_registers_2 0
+		push rsi
+		push rdi
+	%endmacro
+
+	%macro	recover_param_registers_2 0
+		pop rdi
+		pop rsi
+	%endmacro
+
 	%macro	save_param_registers_4 0
 		push rcx
 		push rdx
