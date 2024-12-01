@@ -1,6 +1,6 @@
 global is_valid_base
 
-default rel
+; default rel
 
 extern str_has_min_size
 extern has_char_duplicated
@@ -21,7 +21,10 @@ is_valid_base: ; rdi(base)
 		je loop_end_1
 		push rdi
 		push rcx
-		lea rdx, [is_valid_base_checkers.functions]
+		lea rdx, [rel is_valid_base_checkers.functions]
+		; lea rcx, [rcx * 8]
+		; mul rcx, 8
+		shl rcx, 3 ; 2^3 = 8 | rcx << 3 == rcx * 8
 		add rdx, rcx
 		mov rdx, [rdx]
 		call rdx ; ret = checkers[i](str) ; it's needed multiply for 8 because it's the size of array elements (pointers)
@@ -29,7 +32,7 @@ is_valid_base: ; rdi(base)
 		pop rdi
 		cmp rax, 0 ; ret = 0
 		je finish_function
-		inc qword rcx ; i++
+		inc rcx ; i++
 		jmp loop_start_1
 	loop_end_1:
 		mov rax, 1 ; ret = 1
@@ -63,7 +66,10 @@ __has_base_valid_characters: ; rdi(str)
 			push rcx ; save i
 			push rdx ; save j
 			movzx rdi, byte [rdi + rcx]
-			lea r8, [__has_base_valid_characters_checkers.functions]
+			lea r8, [rel __has_base_valid_characters_checkers.functions]
+			; lea rdx, [rdx * 8]
+			; mul rdx, 8
+			shl rdx, 3 ; 2^3 = 8
 			add r8, rdx
 			mov r8, [r8]
 			call r8 ; ret = checkers[j](str[i]) ; it's needed multiply for 8 because it's the size of array elements (pointers)
@@ -73,7 +79,7 @@ __has_base_valid_characters: ; rdi(str)
 			cmp rax, 0 ; ret == 0
 			mov rax, 0 ; ret = 0 ; beware about do xor instead of mov instruction due xor changes EFLAGS
 			jnz finish_function
-			inc qword rdx ; j++
+			inc rdx ; j++
 			jmp loop_start_2
 		loop_end_2:
 			inc rcx ; i++

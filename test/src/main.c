@@ -1248,11 +1248,11 @@ int	main(void)
 		test_list_swap_data, test_list_prev,
 		test_list_index, test_list_swap, test_list_sort,
 		test_list_del, test_list_last, test_list_push_back,
-		test_list_remove_if, test_exit, test_is_valid_base
+		test_list_remove_if, test_exit
 	};
 	int		tests_size = sizeof(tests) / sizeof(*tests);
 
-	for	(int test = tests_size - 1; test < tests_size; test++)
+	for	(int test = 0; test < tests_size; test++)
 	{
 		tests[test]();
 		if (test < tests_size - 1)
