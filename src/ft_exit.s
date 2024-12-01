@@ -12,9 +12,9 @@
 
 section .text
 
-global exit
+global ft_exit
 
-exit: ; rdi(n)
+ft_exit: ; rdi(int n)
 	mov rax, 60 ; exit system call number
 	syscall
 	ret ; return
