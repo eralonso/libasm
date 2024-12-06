@@ -1,0 +1,35 @@
+%ifndef WHILE_MAC
+	%define WHILE_MAC
+
+	%macro while 3
+		%push while
+		%$whilecmp:
+			if %1 %-2 %3
+				jmp %$whilenot
+			endif
+	%endmacro
+
+	%macro break 0
+		%ifnctx while
+			%error "Expected 'while' before 'break'"
+		%endif
+		jmp %$whilenot
+	%endmacro
+
+	%macro continue 0
+		%ifnctx while
+			%error "Expected 'while' before 'continue'"
+		%endif
+		jmp %$whilecmp
+	%endmacro
+
+	%macro endwhile 0
+		%ifnctx while
+			%error "Expected 'while' before 'endwhile'"
+		%endif
+		jmp %$whilecmp
+		%$whilenot:
+			%pop
+	%endmacro
+
+%endif

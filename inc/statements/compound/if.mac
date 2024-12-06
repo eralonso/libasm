@@ -1,0 +1,18 @@
+%ifndef IF_MAC
+	%define IF_MAC
+
+	%macro if 3
+		%push if
+		cmp %1, %3
+		j%-2 %$ifnot
+	%endmacro
+
+	%macro endif 0
+		%ifnctx if
+			%error "Expected 'if' before 'endif'"
+		%endif
+		%$ifnot:
+			%pop
+	%endmacro
+
+%endif
