@@ -4,6 +4,8 @@
 #include "./tests/strlen.h"
 #include "./tests/strcpy.h"
 #include "./tests/strcmp.h"
+#include "./tests/write.h"
+#include "./tests/read.h"
 
 // ATOI_BASE_MAIN
 

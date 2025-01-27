@@ -6,7 +6,7 @@
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/27 16:02:53 by eralonso          #+#    #+#              #
-#    Updated: 2025/01/27 17:04:16 by eralonso         ###   ########.fr        #
+#    Updated: 2025/01/27 17:06:13 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,8 +30,8 @@ INC_DIRS := $(INC_ROOT)
 
 MAIN := main
 
-TESTS := strlen strcpy strcmp #write read \
-		 strdup convert_sign_to_number strnchri \
+TESTS := strlen strcpy strcmp write read \
+		 #strdup convert_sign_to_number strnchri \
 		 strchri is_sign_symbol convert_sign_str_n_to_number \
 		 isspace str_n_find_first_not_of str_find_first_not_of \
 		 has_char_duplicated str_has_min_size is_valid_base atoi_base \
