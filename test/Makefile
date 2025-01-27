@@ -5,23 +5,12 @@
 #                                                     +:+ +:+         +:+      #
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/08/02 18:06:40 by eralonso          #+#    #+#              #
-#    Updated: 2025/01/27 16:56:01 by eralonso         ###   ########.fr        #
+#    Created: 2025/01/27 16:02:53 by eralonso          #+#    #+#              #
+#    Updated: 2025/01/27 17:04:16 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-ORIGIN_NAME := asm
-NAME := asm
-TESTER := $(addsuffix _killer, $(NAME))
-
-NAME_TYPE := library
-
-ifeq ($(NAME_TYPE),library)
-	NAME := $(addprefix lib,$(NAME))
-	NAME := $(addsuffix .a,$(NAME))
-	TESTER := $(addprefix lib,$(TESTER))
-endif
-
+NAME := libasm_killer
 
 NULL := 
 SPACE := $(NULL) #
@@ -31,38 +20,42 @@ OBJS_ROOT := .obj/
 DEPS_ROOT := .dep/
 BIN_ROOT := bin/
 INC_ROOT := inc/
-TEST_ROOT := test/
 
-SRCS_DIRS := ./
+SRCS_DIRS := ./:tests/:utils/
 SRCS_DIRS := $(subst :,$(SPACE),$(SRCS_DIRS))
 SRCS_DIRS := $(addprefix $(SRCS_ROOT),$(SRCS_DIRS))
 SRCS_DIRS := $(subst $(SPACE),:,$(SRCS_DIRS))
 
 INC_DIRS := $(INC_ROOT)
 
-FILES := ft_strlen ft_strcpy ft_strcmp ft_write ft_read \
-		 ft_strdup convert_sign_to_number ft_strnchri \
-		 ft_strchri is_sign_symbol convert_sign_str_n_to_number \
-		 ft_isspace str_n_find_first_not_of str_find_first_not_of \
-		 has_char_duplicated str_has_min_size is_valid_base ft_atoi_base \
-		 ft_create_elem ft_list_push_front ft_list_size ft_list_swap_data \
-		 ft_list_at ft_list_sort ft_exit ft_list_prev ft_list_swap ft_list_index \
-		 ft_list_del ft_list_remove_if ft_list_last ft_list_push_back
+MAIN := main
 
-SUFFIX := s
+TESTS := strlen strcpy strcmp #write read \
+		 strdup convert_sign_to_number strnchri \
+		 strchri is_sign_symbol convert_sign_str_n_to_number \
+		 isspace str_n_find_first_not_of str_find_first_not_of \
+		 has_char_duplicated str_has_min_size is_valid_base atoi_base \
+		 create_elem list_push_front list_size list_swap_data \
+		 list_at list_sort exit list_prev list_swap list_index \
+		 list_del list_remove_if list_last list_push_back
+
+UTILS := convcmp time typeconv
+
+FILES := $(MAIN) $(TESTS) $(UTILS)
+
+
+SUFFIX := c
 
 SRCS := $(addsuffix .$(SUFFIX),$(FILES))
 OBJS := $(addprefix $(OBJS_ROOT),$(addsuffix .o,$(FILES)))
 DEPS := $(addprefix $(DEPS_ROOT),$(addsuffix .d,$(FILES)))
 
-ARFLAGS := Ucruvs
-
-AS := nasm
-ASFLAGS := -f elf64 #-w+regsize -w+label-orphan # <- These flags are set by default
-AS_MAKEFILE_DEPENDCY_FLAG := -MD
+CFLAGS := -Wall -Wextra -Werror
+ASAN_FLAGS := -fsanitize=address
+DEBUG_FLAGS := -g
+DEPS_FLAGS := -MMD -MF
 
 NAME := $(addprefix $(BIN_ROOT),$(NAME))
-TESTER := $(addprefix $(BIN_ROOT),$(TESTER))
 
 TO_CREATE_DIRS := $(OBJS_ROOT) $(DEPS_ROOT) $(BIN_ROOT)
 
@@ -83,29 +76,23 @@ endef
 #RULES
 
 $(OBJS_ROOT)%.o: %.$(SUFFIX) $(OBJS_ROOT) $(DEPS_ROOT)
-	$(AS) $(ASFLAGS) $(AS_MAKEFILE_DEPENDCY_FLAG) $(DEPS_ROOT)$(basename $*).d $(INCLUDES) $< -o $@
+	$(CC) -c $(CFLAGS) $(ASAN_FLAGS) $(DEBUG_FLAGS) $(INCLUDES) $(DEPS_FLAGS) $(DEPS_ROOT)$(basename $*).d $< -o $@
 
 all: $(NAME)
 
 $(TO_CREATE_DIRS):
 	-mkdir -p $@
 
-$(NAME): $(BIN_ROOT)
-
-ifeq ($(NAME_TYPE),executable)
-$(NAME): $(OBJS)
-	ld $(OBJS) -o $(NAME)
-else ifeq ($(NAME_TYPE),library)
-$(NAME): $(NAME)($(OBJS))
+ifeq (,$(filter-out $(NAME),$(MAKECMDGOALS)))
+ifndef LIBASM
+	$(error LIBASM parameter is mandatory when using this rule)
+endif
 endif
 
-$(TESTER): $(NAME)
-	$(MAKE) -C $(TEST_ROOT) LIBASM="$(shell pwd)/$(NAME)"
-	mv $(TEST_ROOT)$(TESTER) $(TESTER)
+$(NAME): $(BIN_ROOT)
 
-tests: $(TESTER)
-	echo "\n"
-	$<
+$(NAME): $(OBJS)
+	$(CC) $(CFLAGS) $(ASAN_FLAGS) $(DEBUG_FLAGS) $(OBJS) $(LIBASM) -o $@
 
 clean:
 	$(call remove_dir_file,$(OBJS_ROOT),$(OBJS))
@@ -113,14 +100,11 @@ clean:
 
 fclean: clean
 	$(call remove_dir_file, $(BIN_ROOT),$(NAME))
-	$(MAKE) -C $(TEST_ROOT) clean
 
 re: fclean all
 
 -include $(DEPS)
 
-.PHONY: all clean fclean re tests $(TESTER)
+.PHONY: all clean fclean re
 
-.SECONDARY:
-
-.SILENT: tests $(TESTER)
+.SILENT:

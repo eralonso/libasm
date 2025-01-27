@@ -1,6 +1,10 @@
 #ifndef TESTS_H
 # define TESTS_H
 
+#include "./tests/strlen.h"
+#include "./tests/strcpy.h"
+#include "./tests/strcmp.h"
+
 // ATOI_BASE_MAIN
 
 typedef int	(*t_char_cmp)(int);
