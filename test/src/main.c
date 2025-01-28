@@ -11,62 +11,6 @@
 #include "tests.h"
 #include "utils.h"
 
-
-void	__test_strdup_time(char *(*strdup_pointer)(const char *), char *name, const char *s)
-{
-	unsigned long	start;
-	unsigned long	end;
-	char			*string_duplicated;
-
-	start = get_time();
-	string_duplicated = strdup_pointer(s);
-	end = get_time();
-	printf("%s(%s) == %s && different address == %s && same content == %s && errno == %i, in %lu microseconds\n",
-			name, "test", string_duplicated, get_string_bool(string_duplicated != s),
-			get_string_bool(!strncmp(string_duplicated, s, strlen(s))),
-			errno, end - start);
-	free(string_duplicated);
-}
-
-void	test_strdup(void)
-{
-	char	*strs[] = {"patata", "alaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab"};
-	int		strs_len = sizeof(strs) / sizeof(*strs);
-
-	printf("TEST: STRDUP vs FT_STRDUP\n");
-	for (int i = 0; i < strs_len; i++)
-	{
-		printf("TEST %i:\n", i + 1);
-		__test_strdup_time(strdup, "\tstrdup", strs[i]);
-		__test_strdup_time(ft_strdup, "\tft_strdup", strs[i]);
-	}
-}
-
-void	__test_convert_sign_to_number_time(char (*convert_sign_to_number_pointer)(const char ), char *name, const char c)
-{
-	unsigned long	start;
-	unsigned long	end;
-	char			sign;
-
-	start = get_time();
-	sign = convert_sign_to_number_pointer(c);
-	end = get_time();
-	printf("%s(%c) == %i in %lu microseconds\n", name, c, sign, end - start);
-}
-
-void	test_convert_sign_to_number(void)
-{
-	char	strs[] = {'-', '+', 'a'};
-	int		strs_len = sizeof(strs) / sizeof(*strs);
-
-	printf("TEST: CONVERT_SIGN_TO_NUMBER\n");
-	for (int i = 0; i < strs_len; i++)
-	{
-		printf("TEST %i:\n", i + 1);
-		__test_convert_sign_to_number_time(convert_sign_to_number, "\tconvert_sign_to_number", strs[i]);
-	}
-}
-
 void	__test_strnchri_time(ssize_t (*strnchri_pointer)(const char *, int, size_t), 
 			char *name, const char *str, int c, size_t n)
 {

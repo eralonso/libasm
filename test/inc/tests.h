@@ -6,6 +6,8 @@
 #include "./tests/strcmp.h"
 #include "./tests/write.h"
 #include "./tests/read.h"
+#include "./tests/strdup.h"
+#include "./tests/convert_sign_to_number.h"
 
 // ATOI_BASE_MAIN
 
