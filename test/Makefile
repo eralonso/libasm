@@ -6,7 +6,7 @@
 #    By: eralonso <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/27 16:02:53 by eralonso          #+#    #+#              #
-#    Updated: 2025/01/28 11:19:42 by eralonso         ###   ########.fr        #
+#    Updated: 2025/03/09 13:23:28 by eralonso         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,15 +31,15 @@ INC_DIRS := $(INC_ROOT)
 MAIN := main
 
 TESTS := strlen strcpy strcmp write read \
-		 strdup convert_sign_to_number #strnchri \
+		 strdup convert_sign_to_number strnchri \
 		 strchri is_sign_symbol convert_sign_str_n_to_number \
 		 isspace str_n_find_first_not_of str_find_first_not_of \
 		 has_char_duplicated str_has_min_size is_valid_base atoi_base \
-		 create_elem list_push_front list_size list_swap_data \
-		 list_at list_sort exit list_prev list_swap list_index \
-		 list_del list_remove_if list_last list_push_back
+		 create_elem list_push_front list_size list_at \
+		 list_swap_data list_prev list_swap list_index list_sort \
+		 list_del list_last list_push_back list_remove_if exit
 
-UTILS := convcmp time typeconv
+UTILS := convcmp time typeconv list
 
 FILES := $(MAIN) $(TESTS) $(UTILS)
 
